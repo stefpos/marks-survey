@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mark Survey Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: one narrow column — questions, then the board at full column width */
+  :root {
+    --paper: #f6f6f4;
+    --card: #ffffff;
+    --ink: #141414;
+    --muted: #6b6b66;
+    --rule: #dcdcd7;
+    --error: #b42318;
+    --focus: #2f5bd3;
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-block: 40px 80px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  header { display: flex; flex-direction: column; gap: 8px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .intro { margin: 0; color: var(--muted); max-width: 60ch; }
+
+  form { display: flex; flex-direction: column; gap: 32px; }
+
+  fieldset, .question {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  legend, .q-label {
+    padding: 0;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  legend { margin-bottom: 10px; }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .hint { margin: 0; font-size: 13px; color: var(--muted); }
+  .optional { font-weight: 400; font-size: 13px; color: var(--muted); }
+
+  .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .option:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .option input { accent-color: var(--ink); margin: 0; }
+
+  input[type="text"], textarea {
+    font: inherit;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 11px 13px;
+    width: 100%;
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--ink); }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  input[type="text"]:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+
+  .error-msg { margin: 0; font-size: 13px; color: var(--error); }
+  .has-error input[type="text"], .has-error textarea, .has-error .option, .has-error .canvas-wrap {
+    border-color: var(--error);
+  }
+
+  /* Drawing */
+  .canvas-wrap {
+    border: 1px solid var(--rule);
+    background: #ffffff;
+    line-height: 0;
+    touch-action: none;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .board-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .draw-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .control-group { display: flex; align-items: center; gap: 10px; }
+  .control-group label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  input[type="range"] { width: 140px; accent-color: var(--ink); }
+  .brush-slot { width: 28px; height: 28px; display: grid; place-items: center; flex: none; }
+  .brush-preview { border-radius: 50%; background: var(--ink); }
+
+  button {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: #ffffff;
+    cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--ink); }
+  button:active { opacity: 0.75; }
+  button:disabled { opacity: 0.35; cursor: default; }
+
+  .submit-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .submit-row button { font-size: 15px; padding: 12px 24px; }
+  .submit-note { margin: 0; font-size: 13px; color: var(--muted); }
+
+  /* Thank-you */
+  .done {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 28px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+  }
+  .done h2 { margin: 0; font-size: 20px; }
+  .done p { margin: 0; }
+  .done dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 6px 16px;
+    font-size: 13px;
+  }
+  .done dt { color: var(--muted); }
+  .done dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+  .done .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  #dataOut { min-height: 140px; font-family: var(--mono); font-size: 11px; }
+
+  @media (max-width: 480px) {
+    .options { grid-template-columns: minmax(0, 1fr); }
+    h1 { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Prototype · responses download to this device</span>
+    <h1>Mark Survey</h1>
+    <p class="intro">Answer three short questions, then draw a mark in the box at the end. It takes about two minutes.</p>
+  </header>
+
+  <form id="survey" novalidate>
+
+    <!-- Q1: multiple choice -->
+    <fieldset id="q1" data-required="true">
+      <legend><span class="q-num">01</span>How often do you draw or write by hand?</legend>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" id="q1a" value="Every day">Every day</label>
+        <label class="option"><input type="radio" name="q1" id="q1b" value="Most weeks">Most weeks</label>
+        <label class="option"><input type="radio" name="q1" id="q1c" value="Now and then">Now and then</label>
+        <label class="option"><input type="radio" name="q1" id="q1d" value="Rarely or never">Rarely or never</label>
+      </div>
+      <p class="error-msg" hidden>Choose one option.</p>
+    </fieldset>
+
+    <!-- Q2: short text -->
+    <div class="question" id="q2" data-required="true">
+      <label class="q-label" for="q2input"><span class="q-num">02</span>Which one word describes your handwriting?</label>
+      <input type="text" id="q2input" name="q2" maxlength="60" autocomplete="off">
+      <p class="error-msg" hidden>Enter a word or two.</p>
+    </div>
+
+    <!-- Q3: long text -->
+    <div class="question" id="q3" data-required="false">
+      <label class="q-label" for="q3input"><span class="q-num">03</span>Tell us about a mark you make often <span class="optional">Optional</span></label>
+      <p class="hint">A signature, a doodle in the margin, the way you tick a list. What is it and when do you make it?</p>
+      <textarea id="q3input" name="q3" maxlength="2000"></textarea>
+    </div>
+
+    <!-- Q4: drawing -->
+    <div class="question" id="q4" data-required="true">
+      <span class="q-label"><span class="q-num">04</span>Make a mark that feels like yours</span>
+      <p class="hint">Use a mouse, your finger or a stylus. You can undo or clear as often as you like.</p>
+      <div class="canvas-wrap" id="canvasWrap">
+        <canvas id="drawCanvas" aria-label="Drawing area"></canvas>
+      </div>
+      <div class="board-meta">
+        <span id="strokeCount">No strokes yet</span>
+        <span id="boardLabel"></span>
+      </div>
+      <div class="draw-controls">
+        <div class="control-group">
+          <span class="brush-slot"><span class="brush-preview" id="brushPreview"></span></span>
+          <label for="thickness">Brush</label>
+          <input type="range" id="thickness" min="60" max="120" value="80">
+        </div>
+        <div class="control-group">
+          <button type="button" class="secondary" id="undoBtn" disabled>Undo</button>
+          <button type="button" class="secondary" id="clearBtn" disabled>Clear</button>
+        </div>
+      </div>
+      <p class="error-msg" hidden>Draw a mark before submitting.</p>
+    </div>
+
+    <div class="submit-row">
+      <button type="button" id="submitBtn">Download data</button>
+      <p class="submit-note">Saves your answers and drawing as a JSON file. You'll be asked where to save it.</p>
+    </div>
+  </form>
+
+  <section class="done" id="done" hidden>
+    <h2>Thank you</h2>
+    <p id="doneMsg">Your response has been saved.</p>
+    <dl id="doneSummary"></dl>
+    <div class="actions">
+      <button type="button" class="secondary" id="againBtn">Download again</button>
+      <button type="button" class="secondary" id="copyBtn">Copy data</button>
+      <button type="button" id="newBtn">Start a new response</button>
+    </div>
+    <label for="dataOut" class="hint">Response data — if no file arrived, copy this and paste it into a new .json file.</label>
+    <textarea id="dataOut" readonly></textarea>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  // ---- Physical spec ----
+  // Strokes are stored in millimetres, so nothing is tied to a pixel grid.
+  // The thickness slider works in px at 400dpi (as in the original
+  // prototype); each stroke's width is converted to mm for storage.
+  const REF_DPI = 400;
+  const MM_PER_IN = 25.4;
+  const board = { mmW: 210, mmH: 75, label: '210 × 75mm' };
+  //   x, y        position in mm from the top-left of the board
+  //   t           ms since the stroke started
+  //   pressure    0–1 from a pen; mice report 0.5 while pressed
+  //   tiltX/tiltY pen angle in degrees (−90 to 90); 0 for mouse and touch
+  const POINT_FIELDS = ['x', 'y', 't', 'pressure', 'tiltX', 'tiltY'];
+
+  // Questions as they appear on the page, so each response describes itself
+  const QUESTIONS = [
+    { id: 'q1', type: 'multiple-choice', text: 'How often do you draw or write by hand?',
+      options: ['Every day', 'Most weeks', 'Now and then', 'Rarely or never'], required: true },
+    { id: 'q2', type: 'short-text', text: 'Which one word describes your handwriting?', required: true },
+    { id: 'q3', type: 'long-text', text: 'Tell us about a mark you make often', required: false },
+    { id: 'q4', type: 'drawing', text: 'Make a mark that feels like yours', required: true }
+  ];
+
+  const openedAt = new Date(performance.timeOrigin || Date.now()).toISOString();
+  const responseId = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : 'r-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+
+  let strokes = [];
+  let current = null;
+  let strokeStartTime = 0;
+  let lastSubmission = null;
+
+  const round3 = n => Math.round(n * 1000) / 1000;
+  const round1 = n => Math.round((n || 0) * 10) / 10;
+
+  const canvas = document.getElementById('drawCanvas');
+  const wrap = document.getElementById('canvasWrap');
+  const ctx = canvas.getContext('2d');
+  const committed = document.createElement('canvas');
+  const cctx = committed.getContext('2d');
+  const strokeCountEl = document.getElementById('strokeCount');
+  const undoBtn = document.getElementById('undoBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  document.getElementById('boardLabel').textContent = board.label;
+
+  // ---- Rendering ----
+  function paintStroke(c, stroke, scale) {
+    const p = stroke.points;
+    c.fillStyle = '#000';
+    c.strokeStyle = '#000';
+    if (p.length === 1) {
+      c.beginPath();
+      c.arc(p[0][0] * scale, p[0][1] * scale, (stroke.w * scale) / 2, 0, Math.PI * 2);
+      c.fill();
+      return;
+    }
+    c.lineWidth = stroke.w * scale;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.beginPath();
+    c.moveTo(p[0][0] * scale, p[0][1] * scale);
+    if (p.length === 2) {
+      c.lineTo(p[1][0] * scale, p[1][1] * scale);
+    } else {
+      for (let i = 1; i < p.length - 1; i++) {
+        const mx = (p[i][0] + p[i + 1][0]) / 2;
+        const my = (p[i][1] + p[i + 1][1]) / 2;
+        c.quadraticCurveTo(p[i][0] * scale, p[i][1] * scale, mx * scale, my * scale);
+      }
+      const last = p[p.length - 1];
+      c.lineTo(last[0] * scale, last[1] * scale);
+    }
+    c.stroke();
+  }
+
+  function screenScale() { return canvas.width / board.mmW; }
+
+  let rafId = 0;
+  function requestRedraw() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(committed, 0, 0);
+      if (current) paintStroke(ctx, current, screenScale());
+    });
+  }
+
+  function rebuildCommitted() {
+    cctx.clearRect(0, 0, committed.width, committed.height);
+    const s = screenScale();
+    strokes.forEach(st => paintStroke(cctx, st, s));
+    requestRedraw();
+  }
+
+  // ---- Sizing: the board fills the column width at the 210:75 ratio ----
+  let lastW = 0;
+  function fitCanvas() {
+    const cssW = wrap.clientWidth;
+    // Only width drives the size; ignore the height change this function causes
+    if (!cssW || cssW === lastW) return;
+    lastW = cssW;
+    const cssH = cssW * board.mmH / board.mmW;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.style.height = cssH + 'px';
+    canvas.width = committed.width = Math.round(cssW * dpr);
+    canvas.height = committed.height = Math.round(cssH * dpr);
+    rebuildCommitted();
+  }
+  let fitQueued = false;
+  function queueFit() {
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(() => { fitQueued = false; fitCanvas(); });
+  }
+  if (window.ResizeObserver) new ResizeObserver(queueFit).observe(wrap);
+  window.addEventListener('resize', queueFit);
+
+  // ---- Brush ----
+  const thicknessInput = document.getElementById('thickness');
+  const brushPreview = document.getElementById('brushPreview');
+  function brushMm() {
+    return round3(parseInt(thicknessInput.value, 10) * MM_PER_IN / REF_DPI);
+  }
+  function updateBrushDisplay() {
+    const size = Math.min(28, parseInt(thicknessInput.value, 10) / 4.3);
+    brushPreview.style.width = size + 'px';
+    brushPreview.style.height = size + 'px';
+  }
+  thicknessInput.addEventListener('input', updateBrushDisplay);
+
+  function updateDrawState() {
+    const n = strokes.length;
+    strokeCountEl.textContent = n ? n + (n === 1 ? ' stroke' : ' strokes') : 'No strokes yet';
+    undoBtn.disabled = clearBtn.disabled = !n;
+    if (n) clearError('q4');
+  }
+
+  // ---- Drawing ----
+  function toMm(evt) {
+    const r = canvas.getBoundingClientRect();
+    return [
+      (evt.clientX - r.left) / r.width * board.mmW,
+      (evt.clientY - r.top) / r.height * board.mmH
+    ];
+  }
+
+  function addPoint(evt) {
+    const p = toMm(evt);
+    current.points.push([
+      round3(p[0]),
+      round3(p[1]),
+      Math.max(0, Math.round(evt.timeStamp - strokeStartTime)),
+      round3(evt.pressure || 0),
+      round1(evt.tiltX),
+      round1(evt.tiltY)
+    ]);
+  }
+
+  canvas.addEventListener('pointerdown', evt => {
+    evt.preventDefault();
+    if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+    canvas.setPointerCapture(evt.pointerId);
+    strokeStartTime = evt.timeStamp;
+    current = {
+      pointerType: evt.pointerType || 'unknown',
+      w: brushMm(),
+      start: Math.round(evt.timeStamp), // ms since page opened
+      points: []
+    };
+    addPoint(evt);
+    requestRedraw();
+  });
+
+  canvas.addEventListener('pointermove', evt => {
+    if (!current) return;
+    evt.preventDefault();
+    let events = evt.getCoalescedEvents ? evt.getCoalescedEvents() : [];
+    if (!events.length) events = [evt];
+    events.forEach(addPoint);
+    requestRedraw();
+  });
+
+  function endDraw() {
+    if (!current) return;
+    strokes.push(current);
+    paintStroke(cctx, current, screenScale());
+    current = null;
+    requestRedraw();
+    updateDrawState();
+  }
+  window.addEventListener('pointerup', endDraw);
+  window.addEventListener('pointercancel', endDraw);
+
+  function undo() {
+    if (current || !strokes.length) return;
+    strokes.pop();
+    rebuildCommitted();
+    updateDrawState();
+  }
+  undoBtn.addEventListener('click', undo);
+  window.addEventListener('keydown', evt => {
+    // Leave Cmd/Ctrl+Z alone while typing, so text fields undo normally
+    const tag = (evt.target && evt.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if ((evt.metaKey || evt.ctrlKey) && !evt.shiftKey && evt.key.toLowerCase() === 'z') {
+      evt.preventDefault();
+      undo();
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    strokes = [];
+    current = null;
+    rebuildCommitted();
+    updateDrawState();
+  });
+
+  // ---- Validation ----
+  function showError(id) {
+    const el = document.getElementById(id);
+    el.classList.add('has-error');
+    el.querySelector('.error-msg').hidden = false;
+  }
+  function clearError(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('has-error');
+    const msg = el.querySelector('.error-msg');
+    if (msg) msg.hidden = true;
+  }
+
+  const form = document.getElementById('survey');
+  form.addEventListener('change', e => { if (e.target.name === 'q1') clearError('q1'); });
+  form.addEventListener('input', e => { if (e.target.name === 'q2' && e.target.value.trim()) clearError('q2'); });
+
+  function readAnswers() {
+    const q1 = form.querySelector('input[name="q1"]:checked');
+    return {
+      q1: q1 ? q1.value : null,
+      q2: form.q2.value.trim(),
+      q3: form.q3.value.trim()
+    };
+  }
+
+  function validate(a) {
+    const missing = [];
+    if (!a.q1) missing.push('q1');
+    if (!a.q2) missing.push('q2');
+    if (!strokes.length) missing.push('q4');
+    ['q1', 'q2', 'q4'].forEach(id => missing.includes(id) ? showError(id) : clearError(id));
+    return missing;
+  }
+
+  // ---- Submission (saved locally for now) ----
+  function timestampForFilename(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+      'T' + pad(d.getHours()) + '-' + pad(d.getMinutes()) + '-' + pad(d.getSeconds());
+  }
+
+  function download(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // Returns 'saved' (chose a location), 'downloaded' (went to the browser's
+  // download folder), 'cancelled' or 'failed'.
+  async function saveSubmission() {
+    if (!lastSubmission) return 'failed';
+    const json = JSON.stringify(lastSubmission.data);
+    const blob = new Blob([json], { type: 'application/json' });
+
+    // Chrome and Edge: a real "Save as" dialog. Skipped when the page is
+    // inside a frame (e.g. a preview), where the dialog can silently never open.
+    let framed = true;
+    try { framed = window.self !== window.top; } catch (e) { framed = true; }
+    if (window.showSaveFilePicker && !framed) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: lastSubmission.filename,
+          types: [{ description: 'JSON data', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return 'saved';
+      } catch (err) {
+        if (err && err.name === 'AbortError') return 'cancelled';
+        // Picker blocked (e.g. inside a preview frame) — fall through
+      }
+    }
+
+    // Safari and Firefox: a normal download
+    try {
+      download(blob, lastSubmission.filename);
+      return 'downloaded';
+    } catch (err) {
+      return 'failed';
+    }
+  }
+
+  // The button saves on click rather than via a form submit, because
+  // sandboxed previews (like the one in Claude) block form submission.
+  form.addEventListener('submit', evt => evt.preventDefault()); // Enter in a field does nothing
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const answers = readAnswers();
+    const missing = validate(answers);
+    if (missing.length) {
+      document.getElementById(missing[0]).scrollIntoView({ block: 'center' });
+      return;
+    }
+
+    const submitted = new Date();
+    const data = {
+      format: 'mark-survey/1',
+      responseId: responseId,
+      session: {
+        openedAt: openedAt,                     // page opened (UTC)
+        submittedAt: submitted.toISOString(),   // submit pressed (UTC)
+        userAgent: navigator.userAgent
+      },
+      questions: QUESTIONS,
+      answers: answers,                         // keyed by question id
+      drawing: {
+        format: 'mark-strokes/2',
+        questionId: 'q4',
+        units: 'mm',
+        board: { width: board.mmW, height: board.mmH },
+        display: {
+          cssWidth: Math.round(canvas.getBoundingClientRect().width),
+          cssHeight: Math.round(canvas.getBoundingClientRect().height),
+          devicePixelRatio: window.devicePixelRatio || 1
+        },
+        pointFields: POINT_FIELDS,
+        // stroke.start is ms since page opened; point t is ms since stroke start
+        strokes: strokes
+      }
+    };
+
+    lastSubmission = {
+      data: data,
+      filename: 'response_' + timestampForFilename(submitted) + '_' + responseId.slice(0, 8) + '.json'
+    };
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving…';
+    const result = await saveSubmission();
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Download data';
+    if (result === 'cancelled') return; // stay on the form
+
+    document.getElementById('doneMsg').textContent =
+      result === 'saved' ? 'Your response has been saved where you chose.'
+      : result === 'downloaded' ? 'Your response has been sent to your browser’s downloads. If no file appears, copy the data below.'
+      : 'Your browser didn’t allow a download. Copy the data below instead.';
+    document.getElementById('dataOut').value = JSON.stringify(data, null, 2);
+
+    const summary = document.getElementById('doneSummary');
+    summary.innerHTML = '';
+    [['File', lastSubmission.filename],
+     ['Response ID', responseId],
+     ['Strokes', String(strokes.length)]].forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      summary.append(dt, dd);
+    });
+
+    form.hidden = true;
+    document.getElementById('done').hidden = false;
+    window.scrollTo(0, 0);
+  });
+
+  document.getElementById('againBtn').addEventListener('click', () => { saveSubmission(); });
+
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', () => {
+    const out = document.getElementById('dataOut');
+    const fallback = () => { out.focus(); out.select(); copyBtn.textContent = 'Press Cmd/Ctrl+C'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(out.value)
+        .then(() => { copyBtn.textContent = 'Copied'; })
+        .catch(fallback);
+    } else {
+      fallback();
+    }
+    setTimeout(() => { copyBtn.textContent = 'Copy data'; }, 2500);
+  });
+  document.getElementById('newBtn').addEventListener('click', () => location.reload());
+
+  // ---- Init ----
+  updateBrushDisplay();
+  updateDrawState();
+  fitCanvas();
+})();
+</script>
+</body>
+</html>
