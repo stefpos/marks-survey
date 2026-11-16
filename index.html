@@ -282,27 +282,35 @@
 
     <div class="submit-row">
       <button type="button" id="submitBtn">Download data</button>
-      <p class="submit-note">Saves your answers and drawing as a JSON file. You'll be asked where to save it.</p>
+      <p class="submit-note" id="submitNote">Saves your answers and drawing as a JSON file. You'll be asked where to save it.</p>
     </div>
   </form>
 
   <section class="done" id="done" hidden>
-    <h2>Thank you</h2>
+    <h2 id="doneHead">Thank you</h2>
     <p id="doneMsg">Your response has been saved.</p>
     <dl id="doneSummary"></dl>
     <div class="actions">
+      <button type="button" id="retryBtn" hidden>Try sending again</button>
       <button type="button" class="secondary" id="againBtn">Download again</button>
       <button type="button" class="secondary" id="copyBtn">Copy data</button>
-      <button type="button" id="newBtn">Start a new response</button>
+      <button type="button" class="secondary" id="newBtn">Start a new response</button>
     </div>
-    <label for="dataOut" class="hint">Response data — if no file arrived, copy this and paste it into a new .json file.</label>
-    <textarea id="dataOut" readonly></textarea>
+    <div id="fallback">
+      <label for="dataOut" class="hint">Response data — if no file arrived, copy this and paste it into a new .json file.</label>
+      <textarea id="dataOut" readonly></textarea>
+    </div>
   </section>
 
 </div>
 
 <script>
 (function () {
+  // ---- Where responses go ----
+  // Paste the Google Apps Script web app URL (ending in /exec) between the
+  // quotes. Leave it empty and the survey downloads each response instead.
+  const SURVEY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwqIN7AWmL5PQ1H5QKipQS0iXfoMl7gHvlDgy9qL29EprGc1Qjv5e51-6QX_cR47KJP/exec';
+
   // ---- Physical spec ----
   // Strokes are stored in millimetres, so nothing is tied to a pixel grid.
   // The thickness slider works in px at 400dpi (as in the original
@@ -654,34 +662,92 @@
       data: data,
       filename: 'response_' + timestampForFilename(submitted) + '_' + responseId.slice(0, 8) + '.json'
     };
+    document.getElementById('dataOut').value = JSON.stringify(data, null, 2);
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Saving…';
-    const result = await saveSubmission();
+    submitBtn.textContent = SURVEY_ENDPOINT ? 'Sending…' : 'Saving…';
+    const result = SURVEY_ENDPOINT ? await sendSubmission() : await saveSubmission();
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Download data';
+    submitBtn.textContent = SURVEY_ENDPOINT ? 'Submit' : 'Download data';
     if (result === 'cancelled') return; // stay on the form
 
-    document.getElementById('doneMsg').textContent =
-      result === 'saved' ? 'Your response has been saved where you chose.'
-      : result === 'downloaded' ? 'Your response has been sent to your browser’s downloads. If no file appears, copy the data below.'
-      : 'Your browser didn’t allow a download. Copy the data below instead.';
-    document.getElementById('dataOut').value = JSON.stringify(data, null, 2);
-
-    const summary = document.getElementById('doneSummary');
-    summary.innerHTML = '';
-    [['File', lastSubmission.filename],
-     ['Response ID', responseId],
-     ['Strokes', String(strokes.length)]].forEach(([k, v]) => {
-      const dt = document.createElement('dt'); dt.textContent = k;
-      const dd = document.createElement('dd'); dd.textContent = v;
-      summary.append(dt, dd);
-    });
-
+    showDone(result);
     form.hidden = true;
     document.getElementById('done').hidden = false;
     window.scrollTo(0, 0);
   });
+
+  // ---- Sending to Google (Apps Script web app) ----
+  // Sent as text/plain so the browser doesn't need a pre-check that
+  // Apps Script can't answer. Returns 'sent', 'rejected' or 'failed'.
+  let sendError = '';
+  async function sendSubmission() {
+    if (!lastSubmission) return 'failed';
+    const ctrl = window.AbortController ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 30000) : 0;
+    try {
+      const res = await fetch(SURVEY_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(lastSubmission.data),
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      const out = await res.json();
+      if (out && out.ok) return 'sent';
+      sendError = (out && out.error) || 'Unknown error';
+      return 'rejected';
+    } catch (err) {
+      sendError = err && err.name === 'AbortError' ? 'Timed out' : 'No connection';
+      return 'failed';
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
+  function showDone(result) {
+    const sentOk = result === 'sent';
+    const sending = !!SURVEY_ENDPOINT;
+    document.getElementById('doneHead').textContent = sentOk || !sending ? 'Thank you' : 'Your response wasn’t sent';
+    document.getElementById('doneMsg').textContent =
+      result === 'sent' ? 'Your response has been received.'
+      : result === 'saved' ? 'Your response has been saved where you chose.'
+      : result === 'downloaded' ? 'Your response has been sent to your browser’s downloads. If no file appears, copy the data below.'
+      : sending ? 'Something went wrong while sending (' + sendError + '). Check your connection and try again. If it still doesn’t work, download your response and send it to the research team.'
+      : 'Your browser didn’t allow a download. Copy the data below instead.';
+
+    // Once a response is safely received, participants don't need the raw data
+    document.getElementById('retryBtn').hidden = !sending || sentOk;
+    document.getElementById('againBtn').hidden = sentOk;
+    document.getElementById('againBtn').textContent = sending ? 'Download response' : 'Download again';
+    document.getElementById('copyBtn').hidden = sentOk;
+    document.getElementById('fallback').hidden = sentOk;
+
+    const summary = document.getElementById('doneSummary');
+    summary.innerHTML = '';
+    const rows = sentOk
+      ? [['Reference', responseId.slice(0, 8)]]
+      : [['File', lastSubmission.filename], ['Response ID', responseId], ['Strokes', String(strokes.length)]];
+    rows.forEach(([k, v]) => {
+      const dt = document.createElement('dt'); dt.textContent = k;
+      const dd = document.createElement('dd'); dd.textContent = v;
+      summary.append(dt, dd);
+    });
+  }
+
+  const retryBtn = document.getElementById('retryBtn');
+  retryBtn.addEventListener('click', async () => {
+    retryBtn.disabled = true;
+    retryBtn.textContent = 'Sending…';
+    const result = await sendSubmission();
+    retryBtn.disabled = false;
+    retryBtn.textContent = 'Try sending again';
+    showDone(result);
+  });
+
+  if (SURVEY_ENDPOINT) {
+    document.getElementById('submitBtn').textContent = 'Submit';
+    document.getElementById('submitNote').textContent = 'Sends your answers and drawing to the research team.';
+  }
 
   document.getElementById('againBtn').addEventListener('click', () => { saveSubmission(); });
 
