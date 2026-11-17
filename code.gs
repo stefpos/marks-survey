@@ -12,13 +12,15 @@
  */
 
 const JSON_FOLDER_NAME = 'json';
-const EXPECTED_FORMAT = 'mark-survey/1';
+const EXPECTED_FORMAT = 'mark-survey/2'; // three drawings: line, short, dot
 const MAX_BYTES = 5 * 1024 * 1024; // reject anything over 5MB
 
 const HEADERS = [
   'receivedAt', 'responseId', 'openedAt', 'submittedAt', 'secondsOnPage',
-  'q1', 'q2', 'q3',
-  'strokeCount', 'pointCount', 'inputTypes', 'jsonFile'
+  'q1 name', 'q2 email', 'q3 DGN project', 'q4 project findings',
+  'q5 good digital society', 'q6 view changed', 'q7 advice for policymakers',
+  'line strokes', 'short strokes', 'dot strokes', 'strokesPastEdge',
+  'pointCount', 'inputTypes', 'jsonFile'
 ];
 
 // ---- Web app entry points ----
@@ -61,9 +63,18 @@ function checkResponse(d) {
   if (!d || typeof d !== 'object') return 'Not a response';
   if (d.format !== EXPECTED_FORMAT) return 'Unknown format';
   if (typeof d.responseId !== 'string' || !/^[A-Za-z0-9-]{8,64}$/.test(d.responseId)) return 'Bad response ID';
-  if (!d.session || !d.answers || !d.drawing) return 'Missing sections';
-  if (!Array.isArray(d.drawing.strokes) || !d.drawing.strokes.length) return 'No drawing';
+  if (!d.session || !d.answers || !Array.isArray(d.drawings)) return 'Missing sections';
+  for (const name of DRAWING_NAMES) {
+    const dr = drawingFor(d, name);
+    if (!dr || !Array.isArray(dr.strokes) || !dr.strokes.length) return 'Missing ' + name + ' drawing';
+  }
   return null;
+}
+
+const DRAWING_NAMES = ['line', 'short', 'dot'];
+
+function drawingFor(d, name) {
+  return d.drawings.filter(dr => dr && dr.template === name)[0];
 }
 
 // ---- Storage ----
@@ -82,13 +93,10 @@ function store(d, body) {
   const file = folder.createFile(fileName, body, MimeType.PLAIN_TEXT);
 
   const sheet = ss.getSheets()[0];
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-    sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-  }
+  writeHeaders(sheet);
 
-  const strokes = d.drawing.strokes;
+  const strokes = [].concat.apply([], d.drawings.map(dr => Array.isArray(dr.strokes) ? dr.strokes : []));
+  const pastEdge = d.drawings.reduce((n, dr) => n + (Number(dr.strokesPastEdge) || 0), 0);
   const points = strokes.reduce((n, s) => n + (Array.isArray(s.points) ? s.points.length : 0), 0);
   const types = Array.from(new Set(strokes.map(s => s.pointerType))).join(' ');
   const opened = Date.parse(d.session.openedAt);
@@ -102,12 +110,27 @@ function store(d, body) {
     safe(d.session.openedAt),
     safe(d.session.submittedAt),
     secondsOnPage,
-    safe(a.q1), safe(a.q2), safe(a.q3),
-    strokes.length, points, safe(types),
+    safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5), safe(a.q6), safe(a.q7),
+    drawingFor(d, 'line').strokes.length,
+    drawingFor(d, 'short').strokes.length,
+    drawingFor(d, 'dot').strokes.length,
+    pastEdge, points, safe(types),
     file.getUrl()
   ]);
 
   return { fileName: fileName, duplicate: false };
+}
+
+// Writes the header row on an empty sheet, and rewrites it if the
+// columns have changed since it was last written
+function writeHeaders(sheet) {
+  const range = sheet.getRange(1, 1, 1, HEADERS.length);
+  const current = sheet.getLastRow() === 0 ? [] : range.getValues()[0];
+  if (current.join('|') === HEADERS.join('|')) return;
+  if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
+  else range.setValues([HEADERS]);
+  sheet.setFrozenRows(1);
+  range.setFontWeight('bold');
 }
 
 function jsonFolder(ss) {

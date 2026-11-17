@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Mark Survey Prototype</title>
+<title>DGN art commission survey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -118,6 +118,15 @@
   input[type="text"]:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 
   .error-msg { margin: 0; font-size: 13px; color: var(--error); }
+  .char-count {
+    margin: -4px 0 0;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .char-count.at-limit { color: var(--ink); font-weight: 500; }
   .has-error input[type="text"], .has-error textarea, .has-error .option, .has-error .canvas-wrap {
     border-color: var(--error);
   }
@@ -136,6 +145,17 @@
     cursor: crosshair;
     touch-action: none;
   }
+  .edge-note { margin: 0; font-size: 13px; color: var(--muted); }
+  button.link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
   .board-meta {
     display: flex;
     justify-content: space-between;
@@ -153,11 +173,16 @@
     gap: 16px;
     flex-wrap: wrap;
   }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .toggle input { accent-color: var(--ink); margin: 0; }
   .control-group { display: flex; align-items: center; gap: 10px; }
-  .control-group label { font-size: 13px; color: var(--muted); white-space: nowrap; }
-  input[type="range"] { width: 140px; accent-color: var(--ink); }
-  .brush-slot { width: 28px; height: 28px; display: grid; place-items: center; flex: none; }
-  .brush-preview { border-radius: 50%; background: var(--ink); }
 
   button {
     font: inherit;
@@ -216,73 +241,175 @@
   @media (prefers-reduced-motion: reduce) {
     * { scroll-behavior: auto !important; }
   }
+
+  /* Survey text sections */
+  .section { display: flex; flex-direction: column; gap: 12px; }
+  .section h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .section p { margin: 0; max-width: 60ch; }
+  a { color: var(--ink); text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  .placeholder {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    padding: 10px 12px;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    max-width: none !important;
+  }
+  input[type="email"] {
+    font: inherit;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 11px 13px;
+    width: 100%;
+  }
+  input[type="email"]:focus { outline: none; border-color: var(--ink); }
+  input[type="email"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .has-error input[type="email"] { border-color: var(--error); }
+
+  /* About list, placeholders inside it, and the three boards */
+  .about-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 60ch; }
+  .about-list .placeholder { display: block; }
+  .byline { margin: 0; color: var(--muted); }
+  .rules { font-weight: 500; }
+  .mark-question p { margin: 0; max-width: 60ch; }
+  .board { display: flex; flex-direction: column; gap: 10px; }
+  .board .canvas-wrap { align-self: flex-start; max-width: 100%; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <span class="eyebrow">Prototype · responses download to this device</span>
-    <h1>Mark Survey</h1>
-    <p class="intro">Answer three short questions, then draw a mark in the box at the end. It takes about two minutes.</p>
+    <span class="eyebrow">Duration: 5 minutes</span>
+    <h1>Digital Good Network art commission survey and mark-making</h1>
+    <p class="byline">Created by <a href="http://www.stefanieposavec.com">Stefanie Posavec</a></p>
   </header>
+
+  <section class="section">
+    <h2>About this survey</h2>
+    <ul class="about-list">
+      <li><strong>This survey contains:</strong> info about what's in the survey will go here</li>
+      <li>The survey should take around 5 minutes to complete.</li>
+      <li><strong>Write as yourself:</strong> respond in your own words, as though you were talking to a friend. No academic language is required!</li>
+      <li><strong>How this data will be used:</strong> info about what I will use this for, how long I will keep it and how it will be credited in the artwork</li>
+      <li><strong>Further questions or concerns?</strong> Please email me at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</li>
+    </ul>
+  </section>
 
   <form id="survey" novalidate>
 
-    <!-- Q1: multiple choice -->
-    <fieldset id="q1" data-required="true">
-      <legend><span class="q-num">01</span>How often do you draw or write by hand?</legend>
-      <div class="options">
-        <label class="option"><input type="radio" name="q1" id="q1a" value="Every day">Every day</label>
-        <label class="option"><input type="radio" name="q1" id="q1b" value="Most weeks">Most weeks</label>
-        <label class="option"><input type="radio" name="q1" id="q1c" value="Now and then">Now and then</label>
-        <label class="option"><input type="radio" name="q1" id="q1d" value="Rarely or never">Rarely or never</label>
-      </div>
-      <p class="error-msg" hidden>Choose one option.</p>
-    </fieldset>
-
-    <!-- Q2: short text -->
-    <div class="question" id="q2" data-required="true">
-      <label class="q-label" for="q2input"><span class="q-num">02</span>Which one word describes your handwriting?</label>
-      <input type="text" id="q2input" name="q2" maxlength="60" autocomplete="off">
-      <p class="error-msg" hidden>Enter a word or two.</p>
+    <div class="section">
+      <h2>Survey questions</h2>
     </div>
 
-    <!-- Q3: long text -->
-    <div class="question" id="q3" data-required="false">
-      <label class="q-label" for="q3input"><span class="q-num">03</span>Tell us about a mark you make often <span class="optional">Optional</span></label>
-      <p class="hint">A signature, a doodle in the margin, the way you tick a list. What is it and when do you make it?</p>
-      <textarea id="q3input" name="q3" maxlength="2000"></textarea>
+    <div class="question" id="q1">
+      <label class="q-label" for="q1input"><span class="q-num">01</span>Your name</label>
+      <input type="text" id="q1input" name="q1" maxlength="200" autocomplete="name">
+      <p class="error-msg" hidden>Enter your name.</p>
     </div>
 
-    <!-- Q4: drawing -->
-    <div class="question" id="q4" data-required="true">
-      <span class="q-label"><span class="q-num">04</span>Make a mark that feels like yours</span>
+    <div class="question" id="q2">
+      <label class="q-label" for="q2input"><span class="q-num">02</span>Email address</label>
+      <input type="email" id="q2input" name="q2" maxlength="254" autocomplete="email">
+      <p class="error-msg" hidden>Enter a valid email address.</p>
+    </div>
+
+    <div class="question" id="q3">
+      <label class="q-label" for="q3input"><span class="q-num">03</span><span>Your DGN project <span class="optional">Optional</span></span></label>
+      <input type="text" id="q3input" name="q3" maxlength="200">
+    </div>
+
+    <div class="question" id="q4">
+      <label class="q-label" for="q4input"><span class="q-num">04</span><span>Summarise your project findings in language for a lay audience. <span class="optional">Optional</span></span></label>
+      <textarea id="q4input" name="q4" maxlength="300" aria-describedby="q4count"></textarea>
+      <p class="char-count" id="q4count">0 / 300</p>
+    </div>
+
+    <div class="question" id="q5">
+      <label class="q-label" for="q5input"><span class="q-num">05</span><span>In your own words, what does a good digital society look like? <span class="optional">Optional</span></span></label>
+      <textarea id="q5input" name="q5" maxlength="300" aria-describedby="q5count"></textarea>
+      <p class="char-count" id="q5count">0 / 300</p>
+    </div>
+
+    <div class="question" id="q6">
+      <label class="q-label" for="q6input"><span class="q-num">06</span><span>How has your view of the digital good changed since you've done your research? <span class="optional">Optional</span></span></label>
+      <textarea id="q6input" name="q6" maxlength="300" aria-describedby="q6count"></textarea>
+      <p class="char-count" id="q6count">0 / 300</p>
+    </div>
+
+    <div class="question" id="q7">
+      <label class="q-label" for="q7input"><span class="q-num">07</span><span>What advice would you give to future policymakers who want to build the digital good? <span class="optional">Optional</span></span></label>
+      <textarea id="q7input" name="q7" maxlength="300" aria-describedby="q7count"></textarea>
+      <p class="char-count" id="q7count">0 / 300</p>
+    </div>
+
+    <div class="section">
+      <h2>Mark-making submission</h2>
+      <p>For my artwork, I am collecting small expressive lines and dots, drawn by you directly in the browser. Your contributions will be used to represent human expression and flourishing in my artwork.</p>
+      <p>No drawing expertise required; this is a way to add your unique contribution to the collective artwork.</p>
+      <p class="rules">Design guidance:</p>
+      <ul class="about-list">
+        <li>No signatures or any words</li>
+        <li>Nothing from real life, please keep your design abstract</li>
+        <li>Try to keep your lines from extending off the edge of the artboard</li>
+      </ul>
+    </div>
+
+    <div class="question mark-question" id="q8">
+      <span class="q-label"><span class="q-num">1</span>Long line</span>
+      <p>Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, expressive or minimal as you prefer.</p>
+      <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
+      <div class="board" data-board="line"></div>
+      <p class="error-msg" hidden>Draw your long line before submitting.</p>
+    </div>
+
+    <div class="question mark-question" id="q9">
+      <span class="q-label"><span class="q-num">2</span>Short line</span>
+      <p>Draw another line from the dot on the left to the dot on the right. Try a design that looks different than the line you drew above.</p>
+      <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
+      <div class="board" data-board="short"></div>
+      <p class="error-msg" hidden>Draw your short line before submitting.</p>
+    </div>
+
+    <div class="question mark-question" id="q10">
+      <span class="q-label"><span class="q-num">3</span>Dot</span>
+      <p>Draw a dot or radial motif that is no smaller than the central circle and no bigger than the larger circle. How simple or detailed, playful or restrained is up to you!</p>
+      <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
+      <div class="board" data-board="dot"></div>
+      <p class="error-msg" hidden>Draw your dot before submitting.</p>
+    </div>
+
+    <template id="boardTemplate">
       <p class="hint">Use a mouse, your finger or a stylus. You can undo or clear as often as you like.</p>
-      <div class="canvas-wrap" id="canvasWrap">
-        <canvas id="drawCanvas" aria-label="Drawing area"></canvas>
+      <div class="canvas-wrap">
+        <canvas></canvas>
       </div>
       <div class="board-meta">
-        <span id="strokeCount">No strokes yet</span>
-        <span id="boardLabel"></span>
+        <span class="stroke-count">No strokes yet</span>
+        <span class="board-label"></span>
       </div>
+      <p class="edge-note" hidden>Part of that mark went past the edge. <button type="button" class="link edge-undo">Undo it</button></p>
       <div class="draw-controls">
+        <span></span>
         <div class="control-group">
-          <span class="brush-slot"><span class="brush-preview" id="brushPreview"></span></span>
-          <label for="thickness">Brush</label>
-          <input type="range" id="thickness" min="60" max="120" value="80">
-        </div>
-        <div class="control-group">
-          <button type="button" class="secondary" id="undoBtn" disabled>Undo</button>
-          <button type="button" class="secondary" id="clearBtn" disabled>Clear</button>
+          <button type="button" class="secondary undo-btn" disabled>Undo</button>
+          <button type="button" class="secondary clear-btn" disabled>Clear</button>
         </div>
       </div>
-      <p class="error-msg" hidden>Draw a mark before submitting.</p>
-    </div>
+    </template>
 
     <div class="submit-row">
       <button type="button" id="submitBtn">Download data</button>
-      <p class="submit-note" id="submitNote">Saves your answers and drawing as a JSON file. You'll be asked where to save it.</p>
+      <p class="submit-note" id="submitNote">Saves your answers and drawings as a JSON file. You'll be asked where to save it.</p>
     </div>
   </form>
 
@@ -309,57 +436,130 @@
   // ---- Where responses go ----
   // Paste the Google Apps Script web app URL (ending in /exec) between the
   // quotes. Leave it empty and the survey downloads each response instead.
-  const SURVEY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwqIN7AWmL5PQ1H5QKipQS0iXfoMl7gHvlDgy9qL29EprGc1Qjv5e51-6QX_cR47KJP/exec';
+  const SURVEY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwX4SOY3NS0IpYqvjBoW6kjnnz_8B4DRNxDaETkF1hux8_exx05Tz38wCOCE1i3xGDu/exec';
 
-  // ---- Physical spec ----
+  // ---- Physical spec (same as the sketchpad) ----
   // Strokes are stored in millimetres, so nothing is tied to a pixel grid.
-  // The thickness slider works in px at 400dpi (as in the original
-  // prototype); each stroke's width is converted to mm for storage.
+  // The brush is a fixed 85px at 400dpi; each stroke's width is stored in mm.
   const REF_DPI = 400;
+  const BRUSH_PX = 85;
   const MM_PER_IN = 25.4;
-  const board = { mmW: 210, mmH: 75, label: '210 × 75mm' };
+  const DOT_R_MM = 2.5;
+  const LINE_H_MM = 75;   // every board is this tall, so all three share one scale
+  const EDGE_BAND_MM = 5; // edges start to shade this close to the pen
   //   x, y        position in mm from the top-left of the board
   //   t           ms since the stroke started
   //   pressure    0–1 from a pen; mice report 0.5 while pressed
   //   tiltX/tiltY pen angle in degrees (−90 to 90); 0 for mouse and touch
   const POINT_FIELDS = ['x', 'y', 't', 'pressure', 'tiltX', 'tiltY'];
 
+  // ---- The three artboards (copied from the sketchpad) ----
+  // Guides are drawn on screen only; they are recorded in the response but
+  // never part of the drawing itself.
+  const BOARD_SPECS = {
+    line: {
+      questionId: 'q8', name: 'line', title: 'Long line', mmW: 210, mmH: LINE_H_MM,
+      margin: 5,                                                       // dotted guide inset
+      dots: [
+        { role: 'start', x: 5, y: LINE_H_MM / 2, colour: '#a9d3b4' },     // faint green
+        { role: 'end', x: 205, y: LINE_H_MM / 2, colour: '#e8b4a8' }      // faint coral
+      ]
+    },
+    short: {
+      questionId: 'q9', name: 'short', title: 'Short line', mmW: 105, mmH: LINE_H_MM,
+      margin: 5,
+      dots: [
+        { role: 'start', x: 5, y: LINE_H_MM / 2, colour: '#a9d3b4' },
+        { role: 'end', x: 100, y: LINE_H_MM / 2, colour: '#e8b4a8' }
+      ]
+    },
+    dot: {
+      questionId: 'q10', name: 'dot', title: 'Dot', mmW: LINE_H_MM, mmH: LINE_H_MM,
+      // Two faint rings: draw no smaller than the inner, no bigger than the outer
+      circles: { x: LINE_H_MM / 2, y: LINE_H_MM / 2, inner: 5, outer: 30, colour: '#cfcfc9' }
+    }
+  };
+
   // Questions as they appear on the page, so each response describes itself
   const QUESTIONS = [
-    { id: 'q1', type: 'multiple-choice', text: 'How often do you draw or write by hand?',
-      options: ['Every day', 'Most weeks', 'Now and then', 'Rarely or never'], required: true },
-    { id: 'q2', type: 'short-text', text: 'Which one word describes your handwriting?', required: true },
-    { id: 'q3', type: 'long-text', text: 'Tell us about a mark you make often', required: false },
-    { id: 'q4', type: 'drawing', text: 'Make a mark that feels like yours', required: true }
+    { id: 'q1', type: 'short-text', text: 'Your name', required: true },
+    { id: 'q2', type: 'email', text: 'Email address', required: true },
+    { id: 'q3', type: 'short-text', text: 'Your DGN project', required: false },
+    { id: 'q4', type: 'long-text', text: 'Summarise your project findings in language for a lay audience.', required: false },
+    { id: 'q5', type: 'long-text', text: 'In your own words, what does a good digital society look like?', required: false },
+    { id: 'q6', type: 'long-text', text: 'How has your view of the digital good changed since you\'ve done your research?', required: false },
+    { id: 'q7', type: 'long-text', text: 'What advice would you give to future policymakers who want to build the digital good?', required: false },
+    { id: 'q8', type: 'drawing', board: 'line', text: 'Long line', required: true },
+    { id: 'q9', type: 'drawing', board: 'short', text: 'Short line', required: true },
+    { id: 'q10', type: 'drawing', board: 'dot', text: 'Dot', required: true }
   ];
+  const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'];
 
   const openedAt = new Date(performance.timeOrigin || Date.now()).toISOString();
   const responseId = (window.crypto && crypto.randomUUID)
     ? crypto.randomUUID()
     : 'r-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 
-  let strokes = [];
-  let current = null;
-  let strokeStartTime = 0;
   let lastSubmission = null;
 
   const round3 = n => Math.round(n * 1000) / 1000;
   const round1 = n => Math.round((n || 0) * 10) / 10;
+  const brushMm = () => round3(BRUSH_PX * MM_PER_IN / REF_DPI);
 
-  const canvas = document.getElementById('drawCanvas');
-  const wrap = document.getElementById('canvasWrap');
-  const ctx = canvas.getContext('2d');
-  const committed = document.createElement('canvas');
-  const cctx = committed.getContext('2d');
-  const strokeCountEl = document.getElementById('strokeCount');
-  const undoBtn = document.getElementById('undoBtn');
-  const clearBtn = document.getElementById('clearBtn');
+  // ---- Smoothing (display only — saved points are never changed) ----
+  // On: skip points closer than ~3 screen px to the last one kept, lightly
+  // average the rest, draw a Catmull-Rom curve through them, and extend the
+  // live stroke to where the browser predicts the pointer is heading.
+  const smoothing = true; // always on: display only, saved points stay raw
+  const SMOOTH_MIN_CSS_PX = 3;
 
-  document.getElementById('boardLabel').textContent = board.label;
+  // Light averaging: each inner point moves a little toward its neighbours
+  // (weights 1-2-1). Ends stay put so strokes still start and stop where drawn.
+  function averagePoints(p) {
+    if (p.length < 3) return p;
+    const out = [p[0]];
+    for (let i = 1; i < p.length - 1; i++) {
+      out.push([
+        (p[i - 1][0] + 2 * p[i][0] + p[i + 1][0]) / 4,
+        (p[i - 1][1] + 2 * p[i][1] + p[i + 1][1]) / 4
+      ]);
+    }
+    out.push(p[p.length - 1]);
+    return out;
+  }
 
-  // ---- Rendering ----
-  function paintStroke(c, stroke, scale) {
-    const p = stroke.points;
+  function thinPoints(p, minMm) {
+    if (p.length < 3) return p;
+    const out = [p[0]];
+    let last = p[0];
+    for (let i = 1; i < p.length - 1; i++) {
+      if (Math.hypot(p[i][0] - last[0], p[i][1] - last[1]) >= minMm) {
+        out.push(p[i]);
+        last = p[i];
+      }
+    }
+    const end = p[p.length - 1];
+    if (end[0] !== last[0] || end[1] !== last[1]) out.push(end);
+    return out;
+  }
+
+  function catmullPath(c, p, scale) {
+    for (let i = 0; i < p.length - 1; i++) {
+      const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+      c.bezierCurveTo(
+        (p1[0] + (p2[0] - p0[0]) / 6) * scale, (p1[1] + (p2[1] - p0[1]) / 6) * scale,
+        (p2[0] - (p3[0] - p1[0]) / 6) * scale, (p2[1] - (p3[1] - p1[1]) / 6) * scale,
+        p2[0] * scale, p2[1] * scale
+      );
+    }
+  }
+
+  function paintStroke(c, stroke, scale, extra) {
+    let p = extra && extra.length ? stroke.points.concat(extra) : stroke.points;
+    if (smoothing) {
+      const dpr = window.devicePixelRatio || 1;
+      p = averagePoints(thinPoints(p, SMOOTH_MIN_CSS_PX * dpr / scale));
+    }
     c.fillStyle = '#000';
     c.strokeStyle = '#000';
     if (p.length === 1) {
@@ -373,7 +573,9 @@
     c.lineJoin = 'round';
     c.beginPath();
     c.moveTo(p[0][0] * scale, p[0][1] * scale);
-    if (p.length === 2) {
+    if (smoothing) {
+      catmullPath(c, p, scale);
+    } else if (p.length === 2) {
       c.lineTo(p[1][0] * scale, p[1][1] * scale);
     } else {
       for (let i = 1; i < p.length - 1; i++) {
@@ -387,148 +589,303 @@
     c.stroke();
   }
 
-  function screenScale() { return canvas.width / board.mmW; }
-
-  let rafId = 0;
-  function requestRedraw() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(() => {
-      rafId = 0;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(committed, 0, 0);
-      if (current) paintStroke(ctx, current, screenScale());
+  function paintGuides(c, b, scale) {
+    const dpr = window.devicePixelRatio || 1;
+    if (b.margin) {
+      const inset = b.margin * scale;
+      c.save();
+      c.strokeStyle = '#c4c4be';
+      c.lineWidth = dpr;
+      c.setLineDash([3 * dpr, 4 * dpr]);
+      c.strokeRect(inset, inset, b.mmW * scale - inset * 2, b.mmH * scale - inset * 2);
+      c.restore();
+    }
+    if (b.circles) {
+      const o = b.circles;
+      c.save();
+      c.strokeStyle = o.colour;
+      c.lineWidth = 1.5 * dpr;
+      [o.inner, o.outer].forEach(r => {
+        c.beginPath();
+        c.arc(o.x * scale, o.y * scale, r * scale, 0, Math.PI * 2);
+        c.stroke();
+      });
+      c.restore();
+    }
+    (b.dots || []).forEach(d => {
+      c.fillStyle = d.colour;
+      c.beginPath();
+      c.arc(d.x * scale, d.y * scale, DOT_R_MM * scale, 0, Math.PI * 2);
+      c.fill();
     });
   }
 
-  function rebuildCommitted() {
-    cctx.clearRect(0, 0, committed.width, committed.height);
-    const s = screenScale();
-    strokes.forEach(st => paintStroke(cctx, st, s));
-    requestRedraw();
+  // Where a board's guides sit, in mm, so marks can be lined up with them later
+  function guidesFor(b) {
+    const g = {};
+    if (b.margin) g.marginInset = b.margin;
+    if (b.dots) {
+      g.dots = {};
+      b.dots.forEach(d => { g.dots[d.role] = { x: d.x, y: d.y }; });
+      g.dots.radius = DOT_R_MM;
+    }
+    if (b.circles) {
+      g.circles = { x: b.circles.x, y: b.circles.y, innerRadius: b.circles.inner, outerRadius: b.circles.outer };
+    }
+    return g;
   }
 
-  // ---- Sizing: the board fills the column width at the 210:75 ratio ----
-  let lastW = 0;
-  function fitCanvas() {
-    const cssW = wrap.clientWidth;
-    // Only width drives the size; ignore the height change this function causes
-    if (!cssW || cssW === lastW) return;
-    lastW = cssW;
-    const cssH = cssW * board.mmH / board.mmW;
-    const dpr = window.devicePixelRatio || 1;
-    canvas.style.height = cssH + 'px';
-    canvas.width = committed.width = Math.round(cssW * dpr);
-    canvas.height = committed.height = Math.round(cssH * dpr);
-    rebuildCommitted();
+  // ---- One drawing board ----
+  // Each board has its own canvas, strokes, undo and clear.
+  let lastUsed = null; // the board Cmd/Ctrl+Z undoes
+  function makeBoard(spec, host) {
+    host.append(document.getElementById('boardTemplate').content.cloneNode(true));
+    const wrap = host.querySelector('.canvas-wrap');
+    const canvas = host.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const committed = document.createElement('canvas');
+    const cctx = committed.getContext('2d');
+    const strokeCountEl = host.querySelector('.stroke-count');
+    const undoBtn = host.querySelector('.undo-btn');
+    const clearBtn = host.querySelector('.clear-btn');
+    const edgeNote = host.querySelector('.edge-note');
+    canvas.setAttribute('aria-label', spec.title + ' drawing area');
+    host.querySelector('.board-label').textContent = spec.mmW + ' × ' + spec.mmH + 'mm';
+
+    const bd = { spec: spec, strokes: [], current: null };
+    let strokeStartTime = 0;
+    let penMm = null;
+    let predicted = [];
+
+    const screenScale = () => canvas.width / spec.mmW;
+
+    let rafId = 0;
+    function requestRedraw() {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        paintGuides(ctx, spec, screenScale());
+        ctx.drawImage(committed, 0, 0);
+        if (bd.current) {
+          paintStroke(ctx, bd.current, screenScale(), smoothing ? predicted : null);
+          paintEdgeGlow(ctx, screenScale());
+        }
+      });
+    }
+
+    // While drawing, the side of the board the pen is near darkens softly,
+    // and a little more once the pen is past it.
+    function paintEdgeGlow(c, scale) {
+      if (!penMm) return;
+      const band = EDGE_BAND_MM * scale;
+      const W = spec.mmW * scale, H = spec.mmH * scale;
+      const sides = [
+        { d: penMm[0],             x0: 0, y0: 0, x1: band,     y1: 0,        rect: [0, 0, band, H] },
+        { d: spec.mmW - penMm[0],  x0: W, y0: 0, x1: W - band, y1: 0,        rect: [W - band, 0, band, H] },
+        { d: penMm[1],             x0: 0, y0: 0, x1: 0,        y1: band,     rect: [0, 0, W, band] },
+        { d: spec.mmH - penMm[1],  x0: 0, y0: H, x1: 0,        y1: H - band, rect: [0, H - band, W, band] }
+      ];
+      sides.forEach(s => {
+        if (s.d >= EDGE_BAND_MM) return;
+        const alpha = s.d <= 0 ? 0.16 : 0.08 * (1 - s.d / EDGE_BAND_MM);
+        const g = c.createLinearGradient(s.x0, s.y0, s.x1, s.y1);
+        g.addColorStop(0, 'rgba(20, 20, 20, ' + alpha + ')');
+        g.addColorStop(1, 'rgba(20, 20, 20, 0)');
+        c.fillStyle = g;
+        c.fillRect.apply(c, s.rect);
+      });
+    }
+
+    // True when a point's ink (centre ± half the brush width) reaches past the board
+    function pastEdge(x, y, w) {
+      const r = w / 2;
+      return x - r < 0 || y - r < 0 || x + r > spec.mmW || y + r > spec.mmH;
+    }
+
+    function rebuildCommitted() {
+      cctx.clearRect(0, 0, committed.width, committed.height);
+      const s = screenScale();
+      bd.strokes.forEach(st => paintStroke(cctx, st, s));
+      requestRedraw();
+    }
+    bd.rebuild = rebuildCommitted;
+
+    // Sizing: the line board fills the column; every board is that same
+    // height, so all three are drawn at one scale.
+    let lastKey = '';
+    bd.fit = function (colW) {
+      if (!colW) return;
+      // The 1px border sits outside the drawing area, so the canvas keeps the board's exact ratio
+      const cssH = (colW - 2) * LINE_H_MM / BOARD_SPECS.line.mmW;
+      const cssW = cssH * spec.mmW / spec.mmH;
+      const key = String(colW);
+      if (key === lastKey) return;
+      lastKey = key;
+      const dpr = window.devicePixelRatio || 1;
+      wrap.style.width = (cssW + 2) + 'px';
+      canvas.style.height = cssH + 'px';
+      canvas.width = committed.width = Math.round(cssW * dpr);
+      canvas.height = committed.height = Math.round(cssH * dpr);
+      rebuildCommitted();
+    };
+
+    function updateDrawState() {
+      const n = bd.strokes.length;
+      strokeCountEl.textContent = n ? n + (n === 1 ? ' stroke' : ' strokes') : 'No strokes yet';
+      undoBtn.disabled = clearBtn.disabled = !n;
+      if (n) clearError(spec.questionId);
+    }
+
+    function toMm(evt) {
+      const r = canvas.getBoundingClientRect();
+      return [
+        (evt.clientX - r.left) / r.width * spec.mmW,
+        (evt.clientY - r.top) / r.height * spec.mmH
+      ];
+    }
+
+    function addPoint(evt) {
+      const p = toMm(evt);
+      penMm = p;
+      const cur = bd.current;
+      if (!cur.outOfBounds && pastEdge(p[0], p[1], cur.w)) cur.outOfBounds = true;
+      cur.points.push([
+        round3(p[0]),
+        round3(p[1]),
+        Math.max(0, Math.round(evt.timeStamp - strokeStartTime)),
+        round3(evt.pressure || 0),
+        round1(evt.tiltX),
+        round1(evt.tiltY)
+      ]);
+    }
+
+    canvas.addEventListener('pointerdown', evt => {
+      evt.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+      canvas.setPointerCapture(evt.pointerId);
+      strokeStartTime = evt.timeStamp;
+      edgeNote.hidden = true;
+      lastUsed = bd;
+      bd.current = {
+        pointerType: evt.pointerType || 'unknown',
+        w: brushMm(),
+        start: Math.round(evt.timeStamp), // ms since page opened
+        outOfBounds: false,               // true if any ink went past the board's edge
+        points: []
+      };
+      addPoint(evt);
+      requestRedraw();
+    });
+
+    canvas.addEventListener('pointermove', evt => {
+      if (!bd.current) return;
+      evt.preventDefault();
+      let events = evt.getCoalescedEvents ? evt.getCoalescedEvents() : [];
+      if (!events.length) events = [evt];
+      events.forEach(addPoint);
+      // Predicted points are drawn for this frame only, never saved
+      predicted = smoothing && evt.getPredictedEvents
+        ? evt.getPredictedEvents().map(e => toMm(e))
+        : [];
+      requestRedraw();
+    });
+
+    function endDraw() {
+      if (!bd.current) return;
+      bd.strokes.push(bd.current);
+      paintStroke(cctx, bd.current, screenScale());
+      edgeNote.hidden = !bd.current.outOfBounds;
+      bd.current = null;
+      penMm = null;
+      predicted = [];
+      requestRedraw();
+      updateDrawState();
+    }
+    window.addEventListener('pointerup', endDraw);
+    window.addEventListener('pointercancel', endDraw);
+
+    bd.undo = function () {
+      if (bd.current || !bd.strokes.length) return;
+      bd.strokes.pop();
+      edgeNote.hidden = true;
+      rebuildCommitted();
+      updateDrawState();
+    };
+    undoBtn.addEventListener('click', () => { lastUsed = bd; bd.undo(); });
+    host.querySelector('.edge-undo').addEventListener('click', () => { lastUsed = bd; bd.undo(); });
+
+    clearBtn.addEventListener('click', () => {
+      bd.strokes = [];
+      bd.current = null;
+      penMm = null;
+      edgeNote.hidden = true;
+      rebuildCommitted();
+      updateDrawState();
+    });
+
+    // This board's drawing, as saved in the response
+    bd.toData = function () {
+      const r = canvas.getBoundingClientRect();
+      const guides = guidesFor(spec);
+      const d = {
+        format: 'mark-strokes/2',
+        questionId: spec.questionId,
+        template: spec.name,                    // which artboard: line, short or dot
+        units: 'mm',
+        board: { width: spec.mmW, height: spec.mmH },
+        guides: guides,
+        strokesPastEdge: bd.strokes.filter(s => s.outOfBounds).length,
+        display: {
+          cssWidth: Math.round(r.width),
+          cssHeight: Math.round(r.height),
+          devicePixelRatio: window.devicePixelRatio || 1,
+          smoothing: smoothing                  // display setting only; points are raw either way
+        },
+        pointFields: POINT_FIELDS,
+        // stroke.start is ms since page opened; point t is ms since stroke start
+        strokes: bd.strokes
+      };
+      // Boards with start and end dots also save them under the original keys
+      if (guides.dots && guides.dots.start && guides.dots.end) {
+        d.guideInset = spec.margin;
+        d.dots = { start: guides.dots.start, end: guides.dots.end, radius: DOT_R_MM };
+      }
+      return d;
+    };
+
+    updateDrawState();
+    return bd;
+  }
+
+  const boards = [...document.querySelectorAll('.board[data-board]')]
+    .map(host => makeBoard(BOARD_SPECS[host.dataset.board], host));
+
+  // ---- Sizing all boards from the column width ----
+  const form = document.getElementById('survey');
+  function fitAll() {
+    const colW = document.getElementById('q8').clientWidth;
+    boards.forEach(b => b.fit(colW));
   }
   let fitQueued = false;
   function queueFit() {
     if (fitQueued) return;
     fitQueued = true;
-    requestAnimationFrame(() => { fitQueued = false; fitCanvas(); });
+    requestAnimationFrame(() => { fitQueued = false; fitAll(); });
   }
-  if (window.ResizeObserver) new ResizeObserver(queueFit).observe(wrap);
+  if (window.ResizeObserver) new ResizeObserver(queueFit).observe(form);
   window.addEventListener('resize', queueFit);
 
-  // ---- Brush ----
-  const thicknessInput = document.getElementById('thickness');
-  const brushPreview = document.getElementById('brushPreview');
-  function brushMm() {
-    return round3(parseInt(thicknessInput.value, 10) * MM_PER_IN / REF_DPI);
-  }
-  function updateBrushDisplay() {
-    const size = Math.min(28, parseInt(thicknessInput.value, 10) / 4.3);
-    brushPreview.style.width = size + 'px';
-    brushPreview.style.height = size + 'px';
-  }
-  thicknessInput.addEventListener('input', updateBrushDisplay);
 
-  function updateDrawState() {
-    const n = strokes.length;
-    strokeCountEl.textContent = n ? n + (n === 1 ? ' stroke' : ' strokes') : 'No strokes yet';
-    undoBtn.disabled = clearBtn.disabled = !n;
-    if (n) clearError('q4');
-  }
-
-  // ---- Drawing ----
-  function toMm(evt) {
-    const r = canvas.getBoundingClientRect();
-    return [
-      (evt.clientX - r.left) / r.width * board.mmW,
-      (evt.clientY - r.top) / r.height * board.mmH
-    ];
-  }
-
-  function addPoint(evt) {
-    const p = toMm(evt);
-    current.points.push([
-      round3(p[0]),
-      round3(p[1]),
-      Math.max(0, Math.round(evt.timeStamp - strokeStartTime)),
-      round3(evt.pressure || 0),
-      round1(evt.tiltX),
-      round1(evt.tiltY)
-    ]);
-  }
-
-  canvas.addEventListener('pointerdown', evt => {
-    evt.preventDefault();
-    if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
-    canvas.setPointerCapture(evt.pointerId);
-    strokeStartTime = evt.timeStamp;
-    current = {
-      pointerType: evt.pointerType || 'unknown',
-      w: brushMm(),
-      start: Math.round(evt.timeStamp), // ms since page opened
-      points: []
-    };
-    addPoint(evt);
-    requestRedraw();
-  });
-
-  canvas.addEventListener('pointermove', evt => {
-    if (!current) return;
-    evt.preventDefault();
-    let events = evt.getCoalescedEvents ? evt.getCoalescedEvents() : [];
-    if (!events.length) events = [evt];
-    events.forEach(addPoint);
-    requestRedraw();
-  });
-
-  function endDraw() {
-    if (!current) return;
-    strokes.push(current);
-    paintStroke(cctx, current, screenScale());
-    current = null;
-    requestRedraw();
-    updateDrawState();
-  }
-  window.addEventListener('pointerup', endDraw);
-  window.addEventListener('pointercancel', endDraw);
-
-  function undo() {
-    if (current || !strokes.length) return;
-    strokes.pop();
-    rebuildCommitted();
-    updateDrawState();
-  }
-  undoBtn.addEventListener('click', undo);
   window.addEventListener('keydown', evt => {
     // Leave Cmd/Ctrl+Z alone while typing, so text fields undo normally
     const tag = (evt.target && evt.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA') return;
     if ((evt.metaKey || evt.ctrlKey) && !evt.shiftKey && evt.key.toLowerCase() === 'z') {
       evt.preventDefault();
-      undo();
+      if (lastUsed) lastUsed.undo();
     }
-  });
-
-  clearBtn.addEventListener('click', () => {
-    strokes = [];
-    current = null;
-    rebuildCommitted();
-    updateDrawState();
   });
 
   // ---- Validation ----
@@ -544,29 +901,36 @@
     if (msg) msg.hidden = true;
   }
 
-  const form = document.getElementById('survey');
-  form.addEventListener('change', e => { if (e.target.name === 'q1') clearError('q1'); });
-  form.addEventListener('input', e => { if (e.target.name === 'q2' && e.target.value.trim()) clearError('q2'); });
+  form.addEventListener('input', e => {
+    if (e.target.name === 'q1' && e.target.value.trim()) clearError('q1');
+    if (e.target.name === 'q2' && emailOk(e.target)) clearError('q2');
+  });
+
+  function emailOk(input) {
+    return !!input.value.trim() && input.checkValidity();
+  }
 
   function readAnswers() {
-    const q1 = form.querySelector('input[name="q1"]:checked');
-    return {
-      q1: q1 ? q1.value : null,
-      q2: form.q2.value.trim(),
-      q3: form.q3.value.trim()
-    };
+    const a = {};
+    TEXT_IDS.forEach(id => {
+      const input = form[id];
+      const max = input.maxLength > 0 ? input.maxLength : Infinity;
+      a[id] = input.value.slice(0, max).trim();
+    });
+    return a;
   }
 
   function validate(a) {
     const missing = [];
     if (!a.q1) missing.push('q1');
-    if (!a.q2) missing.push('q2');
-    if (!strokes.length) missing.push('q4');
-    ['q1', 'q2', 'q4'].forEach(id => missing.includes(id) ? showError(id) : clearError(id));
+    if (!emailOk(form.q2)) missing.push('q2');
+    boards.forEach(b => { if (!b.strokes.length) missing.push(b.spec.questionId); });
+    ['q1', 'q2'].concat(boards.map(b => b.spec.questionId))
+      .forEach(id => missing.includes(id) ? showError(id) : clearError(id));
     return missing;
   }
 
-  // ---- Submission (saved locally for now) ----
+  // ---- Submission ----
   function timestampForFilename(d) {
     const pad = n => String(n).padStart(2, '0');
     return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
@@ -633,7 +997,7 @@
 
     const submitted = new Date();
     const data = {
-      format: 'mark-survey/1',
+      format: 'mark-survey/2',
       responseId: responseId,
       session: {
         openedAt: openedAt,                     // page opened (UTC)
@@ -642,20 +1006,7 @@
       },
       questions: QUESTIONS,
       answers: answers,                         // keyed by question id
-      drawing: {
-        format: 'mark-strokes/2',
-        questionId: 'q4',
-        units: 'mm',
-        board: { width: board.mmW, height: board.mmH },
-        display: {
-          cssWidth: Math.round(canvas.getBoundingClientRect().width),
-          cssHeight: Math.round(canvas.getBoundingClientRect().height),
-          devicePixelRatio: window.devicePixelRatio || 1
-        },
-        pointFields: POINT_FIELDS,
-        // stroke.start is ms since page opened; point t is ms since stroke start
-        strokes: strokes
-      }
+      drawings: boards.map(b => b.toData())     // line, short, dot — in page order
     };
 
     lastSubmission = {
@@ -726,7 +1077,7 @@
     summary.innerHTML = '';
     const rows = sentOk
       ? [['Reference', responseId.slice(0, 8)]]
-      : [['File', lastSubmission.filename], ['Response ID', responseId], ['Strokes', String(strokes.length)]];
+      : [['File', lastSubmission.filename], ['Response ID', responseId], ['Strokes', boards.map(b => b.spec.name + ' ' + b.strokes.length).join(' · ')]];
     rows.forEach(([k, v]) => {
       const dt = document.createElement('dt'); dt.textContent = k;
       const dd = document.createElement('dd'); dd.textContent = v;
@@ -766,10 +1117,21 @@
   });
   document.getElementById('newBtn').addEventListener('click', () => location.reload());
 
+  // ---- Character counters (q4–q7) ----
+  function updateCount(input) {
+    const out = document.getElementById(input.name + 'count');
+    if (!out) return;
+    const max = input.maxLength;
+    out.textContent = input.value.length + ' / ' + max;
+    out.classList.toggle('at-limit', input.value.length >= max);
+  }
+  form.querySelectorAll('textarea[maxlength]').forEach(t => {
+    t.addEventListener('input', () => updateCount(t));
+    updateCount(t);
+  });
+
   // ---- Init ----
-  updateBrushDisplay();
-  updateDrawState();
-  fitCanvas();
+  fitAll();
 })();
 </script>
 </body>
