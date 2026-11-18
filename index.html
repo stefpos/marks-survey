@@ -127,6 +127,7 @@
     font-variant-numeric: tabular-nums;
   }
   .char-count.at-limit { color: var(--ink); font-weight: 500; }
+  .char-count.over-limit { color: var(--error); font-weight: 500; }
   .has-error input[type="text"], .has-error textarea, .has-error .option, .has-error .canvas-wrap {
     border-color: var(--error);
   }
@@ -246,7 +247,7 @@
   .section { display: flex; flex-direction: column; gap: 12px; }
   .section h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 600;
     line-height: 1.3;
   }
@@ -280,6 +281,10 @@
   .about-list .placeholder { display: block; }
   .byline { margin: 0; color: var(--muted); }
   .rules { font-weight: 500; }
+  .section h3 { margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .consent-list { display: flex; flex-direction: column; gap: 8px; }
+  .consent-list .option { align-items: flex-start; line-height: 1.4; }
+  .consent-list .option input { margin-top: 3px; flex: none; }
   .mark-question p { margin: 0; max-width: 60ch; }
   .board { display: flex; flex-direction: column; gap: 10px; }
   .board .canvas-wrap { align-self: flex-start; max-width: 100%; }
@@ -290,81 +295,98 @@
 
   <header>
     <span class="eyebrow">Duration: 5 minutes</span>
-    <h1>Digital Good Network art commission survey and mark-making</h1>
+    <h1>Digital Good Network art commission: survey</h1>
     <p class="byline">Created by <a href="http://www.stefanieposavec.com">Stefanie Posavec</a></p>
   </header>
 
   <section class="section">
-    <h2>About this survey</h2>
+    <h2>About the survey</h2>
+    <p>This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the DGN's research.</p>
+    <h3>Data usage and privacy terms</h3>
     <ul class="about-list">
-      <li><strong>This survey contains:</strong> info about what's in the survey will go here</li>
-      <li>The survey should take around 5 minutes to complete.</li>
-      <li><strong>Write as yourself:</strong> respond in your own words, as though you were talking to a friend. No academic language is required!</li>
-      <li><strong>How this data will be used:</strong> info about what I will use this for, how long I will keep it and how it will be credited in the artwork</li>
-      <li><strong>Further questions or concerns?</strong> Please email me at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</li>
+      <li>Responses and mark-making submissions will be incorporated into the DGN artwork series.</li>
+      <li>Data will be retained for the duration of the project lifecycle and subsequent exhibitions.</li>
+      <li>All data will be stored securely per DGN privacy standards and fully anonymised in final artworks.</li>
+      <li>Contributions will be credited collectively in exhibition documentation, with text attributed to corresponding research projects where applicable.</li>
     </ul>
+    <h3>Further questions or concerns?</h3>
+    <p>Please email me directly at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</p>
   </section>
 
   <form id="survey" novalidate>
 
     <div class="section">
-      <h2>Survey questions</h2>
+      <h2>Questions</h2>
+      <p class="rules">Guidance:</p>
+      <ul class="about-list">
+        <li><strong>Write in your style:</strong> Write in your own words, using your own voice.</li>
+        <li><strong>Be concise:</strong> Please keep answers brief; shorter responses work best in the artwork.</li>
+      </ul>
     </div>
 
     <div class="question" id="q1">
       <label class="q-label" for="q1input"><span class="q-num">01</span>Your name</label>
-      <input type="text" id="q1input" name="q1" maxlength="200" autocomplete="name">
+      <input type="text" id="q1input" name="q1" maxlength="200" autocomplete="name" required>
       <p class="error-msg" hidden>Enter your name.</p>
     </div>
 
     <div class="question" id="q2">
       <label class="q-label" for="q2input"><span class="q-num">02</span>Email address</label>
-      <input type="email" id="q2input" name="q2" maxlength="254" autocomplete="email">
+      <input type="email" id="q2input" name="q2" maxlength="254" autocomplete="email" required>
       <p class="error-msg" hidden>Enter a valid email address.</p>
     </div>
 
     <div class="question" id="q3">
-      <label class="q-label" for="q3input"><span class="q-num">03</span><span>Your DGN project <span class="optional">Optional</span></span></label>
+      <label class="q-label" for="q3input"><span class="q-num">03</span><span>Your DGN project title <span class="optional">Optional</span></span></label>
       <input type="text" id="q3input" name="q3" maxlength="200">
     </div>
 
     <div class="question" id="q4">
-      <label class="q-label" for="q4input"><span class="q-num">04</span><span>Summarise your project findings in language for a lay audience. <span class="optional">Optional</span></span></label>
-      <textarea id="q4input" name="q4" maxlength="300" aria-describedby="q4count"></textarea>
-      <p class="char-count" id="q4count">0 / 300</p>
+      <label class="q-label" for="q4input"><span class="q-num">04</span><span>Summarise your project findings for a general audience <span class="optional">Optional</span></span></label>
+      <textarea id="q4input" name="q4" data-max-words="20" maxlength="500" aria-describedby="q4count"></textarea>
+      <p class="char-count" id="q4count">0 / 20 words</p>
+      <p class="error-msg" hidden></p>
     </div>
 
     <div class="question" id="q5">
-      <label class="q-label" for="q5input"><span class="q-num">05</span><span>In your own words, what does a good digital society look like? <span class="optional">Optional</span></span></label>
-      <textarea id="q5input" name="q5" maxlength="300" aria-describedby="q5count"></textarea>
-      <p class="char-count" id="q5count">0 / 300</p>
+      <label class="q-label" for="q5input"><span class="q-num">05</span><span>Describe the 'digital good' in no more than ten words <span class="optional">Optional</span></span></label>
+      <textarea id="q5input" name="q5" data-max-words="10" maxlength="300" aria-describedby="q5count"></textarea>
+      <p class="char-count" id="q5count">0 / 10 words</p>
+      <p class="error-msg" hidden></p>
     </div>
 
     <div class="question" id="q6">
-      <label class="q-label" for="q6input"><span class="q-num">06</span><span>How has your view of the digital good changed since you've done your research? <span class="optional">Optional</span></span></label>
-      <textarea id="q6input" name="q6" maxlength="300" aria-describedby="q6count"></textarea>
-      <p class="char-count" id="q6count">0 / 300</p>
+      <label class="q-label" for="q6input"><span class="q-num">06</span><span>What defines a good digital society? <span class="optional">Optional</span></span></label>
+      <textarea id="q6input" name="q6" data-max-words="15" maxlength="400" aria-describedby="q6count"></textarea>
+      <p class="char-count" id="q6count">0 / 15 words</p>
+      <p class="error-msg" hidden></p>
     </div>
 
     <div class="question" id="q7">
-      <label class="q-label" for="q7input"><span class="q-num">07</span><span>What advice would you give to future policymakers who want to build the digital good? <span class="optional">Optional</span></span></label>
-      <textarea id="q7input" name="q7" maxlength="300" aria-describedby="q7count"></textarea>
-      <p class="char-count" id="q7count">0 / 300</p>
+      <label class="q-label" for="q7input"><span class="q-num">07</span><span>How has your understanding of the digital good evolved through your research? <span class="optional">Optional</span></span></label>
+      <textarea id="q7input" name="q7" data-max-words="15" maxlength="400" aria-describedby="q7count"></textarea>
+      <p class="char-count" id="q7count">0 / 15 words</p>
+      <p class="error-msg" hidden></p>
+    </div>
+
+    <div class="question" id="q8">
+      <label class="q-label" for="q8input"><span class="q-num">08</span><span>What advice would you offer policymakers working toward the digital good? <span class="optional">Optional</span></span></label>
+      <textarea id="q8input" name="q8" data-max-words="15" maxlength="400" aria-describedby="q8count"></textarea>
+      <p class="char-count" id="q8count">0 / 15 words</p>
+      <p class="error-msg" hidden></p>
     </div>
 
     <div class="section">
       <h2>Mark-making submission</h2>
-      <p>For my artwork, I am collecting small expressive lines and dots, drawn by you directly in the browser. Your contributions will be used to represent human expression and flourishing in my artwork.</p>
-      <p>No drawing expertise required; this is a way to add your unique contribution to the collective artwork.</p>
       <p class="rules">Design guidance:</p>
       <ul class="about-list">
         <li>No signatures or any words</li>
-        <li>Nothing from real life, please keep your design abstract</li>
-        <li>Try to keep your lines from extending off the edge of the artboard</li>
+        <li>Nothing from real life, please keep your design abstract!</li>
+        <li>If you can, try to keep your lines from extending off the edge of the artboard</li>
       </ul>
     </div>
 
-    <div class="question mark-question" id="q8">
+    <div class="question mark-question" id="m1">
       <span class="q-label"><span class="q-num">1</span>Long line</span>
       <p>Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, expressive or minimal as you prefer.</p>
       <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
@@ -372,20 +394,39 @@
       <p class="error-msg" hidden>Draw your long line before submitting.</p>
     </div>
 
-    <div class="question mark-question" id="q9">
+    <div class="question mark-question" id="m2">
       <span class="q-label"><span class="q-num">2</span>Short line</span>
-      <p>Draw another line from the dot on the left to the dot on the right. Try a design that looks different than the line you drew above.</p>
+      <p>Draw another line from the dot on the left to the dot on the right. Try making a mark that looks different than the line you drew above.</p>
       <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
       <div class="board" data-board="short"></div>
       <p class="error-msg" hidden>Draw your short line before submitting.</p>
     </div>
 
-    <div class="question mark-question" id="q10">
+    <div class="question mark-question" id="m3">
       <span class="q-label"><span class="q-num">3</span>Dot</span>
       <p>Draw a dot or radial motif that is no smaller than the central circle and no bigger than the larger circle. How simple or detailed, playful or restrained is up to you!</p>
       <p class="placeholder">[PLACEHOLDER: example image of what responses might look like]</p>
       <div class="board" data-board="dot"></div>
       <p class="error-msg" hidden>Draw your dot before submitting.</p>
+    </div>
+
+    <div class="section">
+      <h2>Consent</h2>
+      <p id="consentIntro">By submitting this survey, I consent to the use of the following materials in the DGN artwork series (untick where appropriate):</p>
+    </div>
+
+    <div class="question" id="consent" role="group" aria-labelledby="consentIntro">
+      <div class="consent-list">
+        <label class="option"><input type="checkbox" name="c1" checked> Text from currently published materials</label>
+        <label class="option"><input type="checkbox" name="c2" checked> Text from the most recent internal DGN progress report</label>
+        <label class="option"><input type="checkbox" name="c3" checked> Submitted survey responses</label>
+        <label class="option"><input type="checkbox" name="c4" checked> Mark-making submissions generated in this survey</label>
+      </div>
+    </div>
+
+    <div class="question" id="c5">
+      <label class="q-label" for="c5input"><span>Additional notes or conditions regarding consent <span class="optional">Optional</span></span></label>
+      <textarea id="c5input" name="c5" maxlength="1000"></textarea>
     </div>
 
     <template id="boardTemplate">
@@ -458,7 +499,7 @@
   // never part of the drawing itself.
   const BOARD_SPECS = {
     line: {
-      questionId: 'q8', name: 'line', title: 'Long line', mmW: 210, mmH: LINE_H_MM,
+      questionId: 'm1', name: 'line', title: 'Long line', mmW: 210, mmH: LINE_H_MM,
       margin: 5,                                                       // dotted guide inset
       dots: [
         { role: 'start', x: 5, y: LINE_H_MM / 2, colour: '#a9d3b4' },     // faint green
@@ -466,7 +507,7 @@
       ]
     },
     short: {
-      questionId: 'q9', name: 'short', title: 'Short line', mmW: 105, mmH: LINE_H_MM,
+      questionId: 'm2', name: 'short', title: 'Short line', mmW: 105, mmH: LINE_H_MM,
       margin: 5,
       dots: [
         { role: 'start', x: 5, y: LINE_H_MM / 2, colour: '#a9d3b4' },
@@ -474,7 +515,7 @@
       ]
     },
     dot: {
-      questionId: 'q10', name: 'dot', title: 'Dot', mmW: LINE_H_MM, mmH: LINE_H_MM,
+      questionId: 'm3', name: 'dot', title: 'Dot', mmW: LINE_H_MM, mmH: LINE_H_MM,
       // Two faint rings: draw no smaller than the inner, no bigger than the outer
       circles: { x: LINE_H_MM / 2, y: LINE_H_MM / 2, inner: 5, outer: 30, colour: '#cfcfc9' }
     }
@@ -484,16 +525,24 @@
   const QUESTIONS = [
     { id: 'q1', type: 'short-text', text: 'Your name', required: true },
     { id: 'q2', type: 'email', text: 'Email address', required: true },
-    { id: 'q3', type: 'short-text', text: 'Your DGN project', required: false },
-    { id: 'q4', type: 'long-text', text: 'Summarise your project findings in language for a lay audience.', required: false },
-    { id: 'q5', type: 'long-text', text: 'In your own words, what does a good digital society look like?', required: false },
-    { id: 'q6', type: 'long-text', text: 'How has your view of the digital good changed since you\'ve done your research?', required: false },
-    { id: 'q7', type: 'long-text', text: 'What advice would you give to future policymakers who want to build the digital good?', required: false },
-    { id: 'q8', type: 'drawing', board: 'line', text: 'Long line', required: true },
-    { id: 'q9', type: 'drawing', board: 'short', text: 'Short line', required: true },
-    { id: 'q10', type: 'drawing', board: 'dot', text: 'Dot', required: true }
+    { id: 'q3', type: 'short-text', text: 'Your DGN project title', required: false },
+    { id: 'q4', type: 'long-text', text: 'Summarise your project findings for a general audience', maxWords: 20, required: false },
+    { id: 'q5', type: 'long-text', text: 'Describe the \'digital good\' in no more than ten words', maxWords: 10, required: false },
+    { id: 'q6', type: 'long-text', text: 'What defines a good digital society?', maxWords: 15, required: false },
+    { id: 'q7', type: 'long-text', text: 'How has your understanding of the digital good evolved through your research?', maxWords: 15, required: false },
+    { id: 'q8', type: 'long-text', text: 'What advice would you offer policymakers working toward the digital good?', maxWords: 15, required: false },
+    { id: 'm1', type: 'drawing', board: 'line', text: 'Long line', required: true },
+    { id: 'm2', type: 'drawing', board: 'short', text: 'Short line', required: true },
+    { id: 'm3', type: 'drawing', board: 'dot', text: 'Dot', required: true },
+    { id: 'c1', type: 'consent', text: 'Consent: text from currently published materials', required: false },
+    { id: 'c2', type: 'consent', text: 'Consent: text from the most recent internal DGN progress report', required: false },
+    { id: 'c3', type: 'consent', text: 'Consent: submitted survey responses', required: false },
+    { id: 'c4', type: 'consent', text: 'Consent: mark-making submissions generated in this survey', required: false },
+    { id: 'c5', type: 'long-text', text: 'Additional notes or conditions regarding consent', required: false }
   ];
-  const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7'];
+  const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'c5'];
+  const CONSENT_IDS = ['c1', 'c2', 'c3', 'c4'];
+  const WORD_LIMITED = [...document.querySelectorAll('textarea[data-max-words]')];
 
   const openedAt = new Date(performance.timeOrigin || Date.now()).toISOString();
   const responseId = (window.crypto && crypto.randomUUID)
@@ -508,8 +557,7 @@
 
   // ---- Smoothing (display only — saved points are never changed) ----
   // On: skip points closer than ~3 screen px to the last one kept, lightly
-  // average the rest, draw a Catmull-Rom curve through them, and extend the
-  // live stroke to where the browser predicts the pointer is heading.
+  // average the rest, and draw a Catmull-Rom curve through them.
   const smoothing = true; // always on: display only, saved points stay raw
   const SMOOTH_MIN_CSS_PX = 3;
 
@@ -655,7 +703,6 @@
     const bd = { spec: spec, strokes: [], current: null };
     let strokeStartTime = 0;
     let penMm = null;
-    let predicted = [];
 
     const screenScale = () => canvas.width / spec.mmW;
 
@@ -669,7 +716,7 @@
         paintGuides(ctx, spec, screenScale());
         ctx.drawImage(committed, 0, 0);
         if (bd.current) {
-          paintStroke(ctx, bd.current, screenScale(), smoothing ? predicted : null);
+          paintStroke(ctx, bd.current, screenScale());
           paintEdgeGlow(ctx, screenScale());
         }
       });
@@ -785,10 +832,8 @@
       let events = evt.getCoalescedEvents ? evt.getCoalescedEvents() : [];
       if (!events.length) events = [evt];
       events.forEach(addPoint);
-      // Predicted points are drawn for this frame only, never saved
-      predicted = smoothing && evt.getPredictedEvents
-        ? evt.getPredictedEvents().map(e => toMm(e))
-        : [];
+      // No predicted points: the browser's guesses overshoot and snap back
+      // each frame, which makes the tip of the line judder
       requestRedraw();
     });
 
@@ -799,7 +844,6 @@
       edgeNote.hidden = !bd.current.outOfBounds;
       bd.current = null;
       penMm = null;
-      predicted = [];
       requestRedraw();
       updateDrawState();
     }
@@ -917,6 +961,7 @@
       const max = input.maxLength > 0 ? input.maxLength : Infinity;
       a[id] = input.value.slice(0, max).trim();
     });
+    CONSENT_IDS.forEach(id => { a[id] = form[id].checked ? 'yes' : 'no'; });
     return a;
   }
 
@@ -924,8 +969,11 @@
     const missing = [];
     if (!a.q1) missing.push('q1');
     if (!emailOk(form.q2)) missing.push('q2');
+    WORD_LIMITED.forEach(t => {
+      if (overLimit(t)) missing.push(t.name);
+    });
     boards.forEach(b => { if (!b.strokes.length) missing.push(b.spec.questionId); });
-    ['q1', 'q2'].concat(boards.map(b => b.spec.questionId))
+    ['q1', 'q2'].concat(WORD_LIMITED.map(t => t.name), boards.map(b => b.spec.questionId))
       .forEach(id => missing.includes(id) ? showError(id) : clearError(id));
     return missing;
   }
@@ -1063,7 +1111,7 @@
       result === 'sent' ? 'Your response has been received.'
       : result === 'saved' ? 'Your response has been saved where you chose.'
       : result === 'downloaded' ? 'Your response has been sent to your browser’s downloads. If no file appears, copy the data below.'
-      : sending ? 'Something went wrong while sending (' + sendError + '). Check your connection and try again. If it still doesn’t work, download your response and send it to the research team.'
+      : sending ? 'Something went wrong while sending (' + sendError + '). Check your connection and try again. If it still doesn’t work, download your response and send it to stef@stefanieposavec.com.'
       : 'Your browser didn’t allow a download. Copy the data below instead.';
 
     // Once a response is safely received, participants don't need the raw data
@@ -1097,7 +1145,7 @@
 
   if (SURVEY_ENDPOINT) {
     document.getElementById('submitBtn').textContent = 'Submit';
-    document.getElementById('submitNote').textContent = 'Sends your answers and drawing to the research team.';
+    document.getElementById('submitNote').textContent = 'Your contributions will be submitted for use in an artwork.';
   }
 
   document.getElementById('againBtn').addEventListener('click', () => { saveSubmission(); });
@@ -1117,15 +1165,25 @@
   });
   document.getElementById('newBtn').addEventListener('click', () => location.reload());
 
-  // ---- Character counters (q4–q7) ----
-  function updateCount(input) {
-    const out = document.getElementById(input.name + 'count');
-    if (!out) return;
-    const max = input.maxLength;
-    out.textContent = input.value.length + ' / ' + max;
-    out.classList.toggle('at-limit', input.value.length >= max);
+  // ---- Word counters (q4–q8) ----
+  // Soft limit: typing past it is allowed, but the counter and message show
+  // it, and the survey won't submit until the answer is trimmed.
+  function wordCount(text) {
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    return words.length;
   }
-  form.querySelectorAll('textarea[maxlength]').forEach(t => {
+  function wordMsg(t, text) { document.querySelector('#' + t.name + ' .error-msg').textContent = text; }
+  function overLimit(t) { return wordCount(t.value) > Number(t.dataset.maxWords); }
+  function updateCount(t) {
+    const out = document.getElementById(t.name + 'count');
+    const n = wordCount(t.value), max = Number(t.dataset.maxWords);
+    out.textContent = n + ' / ' + max + (max === 1 ? ' word' : ' words');
+    out.classList.toggle('at-limit', n === max);
+    out.classList.toggle('over-limit', n > max);
+    if (n > max) { wordMsg(t, 'Please keep this to ' + max + ' words or fewer.'); showError(t.name); }
+    else if (n > 0) clearError(t.name);
+  }
+  WORD_LIMITED.forEach(t => {
     t.addEventListener('input', () => updateCount(t));
     updateCount(t);
   });

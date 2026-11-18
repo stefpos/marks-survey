@@ -17,8 +17,11 @@ const MAX_BYTES = 5 * 1024 * 1024; // reject anything over 5MB
 
 const HEADERS = [
   'receivedAt', 'responseId', 'openedAt', 'submittedAt', 'secondsOnPage',
-  'q1 name', 'q2 email', 'q3 DGN project', 'q4 project findings',
-  'q5 good digital society', 'q6 view changed', 'q7 advice for policymakers',
+  'q1 name', 'q2 email', 'q3 DGN project title', 'q4 project findings',
+  'q5 digital good in ten words', 'q6 good digital society',
+  'q7 understanding evolved', 'q8 advice for policymakers',
+  'consent published text', 'consent progress report', 'consent survey responses',
+  'consent marks', 'consent notes',
   'line strokes', 'short strokes', 'dot strokes', 'strokesPastEdge',
   'pointCount', 'inputTypes', 'jsonFile'
 ];
@@ -110,7 +113,8 @@ function store(d, body) {
     safe(d.session.openedAt),
     safe(d.session.submittedAt),
     secondsOnPage,
-    safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5), safe(a.q6), safe(a.q7),
+    safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5), safe(a.q6), safe(a.q7), safe(a.q8),
+    safe(a.c1), safe(a.c2), safe(a.c3), safe(a.c4), safe(a.c5),
     drawingFor(d, 'line').strokes.length,
     drawingFor(d, 'short').strokes.length,
     drawingFor(d, 'dot').strokes.length,
