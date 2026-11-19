@@ -319,7 +319,7 @@
     <p class="byline">Created by <a href="http://www.stefanieposavec.com">Stefanie Posavec</a></p>
   </header>
 
-  <section class="section">
+  <section class="section" id="about">
     <h2>About the survey</h2>
     <p>This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the DGN's research.</p>
     <h3>Data usage and privacy terms</h3>
@@ -1112,6 +1112,7 @@
 
     showDone(result);
     form.hidden = true;
+    document.getElementById('about').hidden = true; // leave only the title and the thank-you
     document.getElementById('done').hidden = false;
     window.scrollTo(0, 0);
   });
