@@ -21,7 +21,8 @@ HERE = Path(__file__).resolve().parent
 PAGE = HERE.parent / 'index.html'
 KINDS = ['line', 'short', 'dot']
 LABELS = {'line': 'Example long lines', 'short': 'Example short lines', 'dot': 'Example dots'}
-GUIDE = '#d6d6d1'
+NAMES = {'line': 'long line', 'short': 'short line', 'dot': 'dot'}
+GUIDE = '#85857f'  # same as the drawing boards on the page
 THIN_MM = 0.6  # skip points closer than this, like the page's on-screen smoothing
 
 
@@ -85,17 +86,17 @@ def guides_svg(d):
     c = g.get('circles')
     if c:
         for r in (c['innerRadius'], c['outerRadius']):
-            out.append(f'<circle cx="{f(c["x"])}" cy="{f(c["y"])}" r="{f(r)}" fill="none" stroke="{GUIDE}" stroke-width="0.4"/>')
+            out.append(f'<circle cx="{f(c["x"])}" cy="{f(c["y"])}" r="{f(r)}" fill="none" stroke="{GUIDE}" stroke-width="1" vector-effect="non-scaling-stroke"/>')
     dots = g.get('dots') or d.get('dots')
     if dots:
         r = dots.get('radius', 2.5)
-        for role, col in (('start', '#cfe6d5'), ('end', '#f2d6cf')):
+        for role, col in (('start', '#4a9463'), ('end', '#d0654c')):
             if role in dots:
                 out.append(f'<circle cx="{f(dots[role]["x"])}" cy="{f(dots[role]["y"])}" r="{f(r)}" fill="{col}"/>')
     return out
 
 
-def mark_svg(d):
+def mark_svg(d, label):
     w, h = d['board']['width'], d['board']['height']
     parts = guides_svg(d)
     for s in d.get('strokes', []):
@@ -105,7 +106,7 @@ def mark_svg(d):
             parts.append(f'<path d="{pd}" fill="none" stroke="#000" stroke-width="{sw}" stroke-linecap="round" stroke-linejoin="round"/>')
         else:
             parts.append(f'<circle cx="{f(dot[0])}" cy="{f(dot[1])}" r="{f(s.get("w", 5.398) / 2)}" fill="#000"/>')
-    return (f'<svg viewBox="0 0 {f(w)} {f(h)}" style="aspect-ratio:{f(w)}/{f(h)}" role="img" aria-label="Example mark">'
+    return (f'<svg viewBox="0 0 {f(w)} {f(h)}" style="aspect-ratio:{f(w)}/{f(h)}" role="img" aria-label="{label}">'
             + ''.join(parts) + '</svg>')
 
 
@@ -116,7 +117,7 @@ def block(kind):
         data = json.loads(fp.read_text())
         for d in drawings_in(data):
             if kind_of(d) == kind and d.get('strokes'):
-                svgs.append(mark_svg(d))
+                svgs.append(mark_svg(d, f'Example {NAMES[kind]} {len(svgs) + 1}'))
     if not svgs:
         return None, 0
     html = (f'<div class="examples examples-{kind}" role="group" aria-label="{LABELS[kind]}">\n'
