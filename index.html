@@ -32,8 +32,13 @@
     font-size: 15px;
     line-height: 1.5;
     padding-block: 40px 80px;
-    padding-left: max(16px, env(safe-area-inset-left, 0px));
-    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    /* Wide side margins keep the drawing boards clear of the screen
+       edges, where a swipe goes back a page instead of drawing */
+    padding-left: max(32px, env(safe-area-inset-left, 0px));
+    padding-right: max(32px, env(safe-area-inset-right, 0px));
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-x: clip;
   }
   .wrap {
     max-width: 720px;
@@ -103,8 +108,9 @@
   .option:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
   .option input { accent-color: var(--ink); margin: 0; }
 
-  input[type="text"], textarea {
+  input[type="text"], input[type="email"], textarea {
     font: inherit;
+    font-size: 16px; /* under 16px, iPhones zoom the page when a box is tapped */
     color: var(--ink);
     background: var(--card);
     border: 1px solid var(--rule);
@@ -265,6 +271,7 @@
   }
   input[type="email"] {
     font: inherit;
+    font-size: 16px;
     color: var(--ink);
     background: var(--card);
     border: 1px solid var(--rule);
