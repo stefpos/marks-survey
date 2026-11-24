@@ -561,7 +561,7 @@
       questionId: 'm3', name: 'dot', title: 'Dot', mmW: LINE_H_MM, mmH: LINE_H_MM,
       // Two rings: draw no smaller than the inner, no bigger than the outer
       // (outer 60mm across, inner 20mm across)
-      circles: { x: LINE_H_MM / 2, y: LINE_H_MM / 2, inner: 10, outer: 30, colour: '#c4c4be' } // same grey as the line boards' dotted guide
+      circles: { x: LINE_H_MM / 2, y: LINE_H_MM / 2, inner: 10, outer: 30, colour: '#85857f' }
     }
   };
 
@@ -699,7 +699,7 @@
       const o = b.circles;
       c.save();
       c.strokeStyle = o.colour;
-      c.lineWidth = dpr; // 1px, like the dotted guide on the line boards
+      c.lineWidth = dpr; // 1px, like the box outlines; the colour gives the 3:1 contrast
       [o.inner, o.outer].forEach(r => {
         c.beginPath();
         c.arc(o.x * scale, o.y * scale, r * scale, 0, Math.PI * 2);
