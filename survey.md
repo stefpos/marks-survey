@@ -1,39 +1,51 @@
 # Digital Good Network art commission: survey
 
 Created by [Stefanie Posavec](http://www.stefanieposavec.com)
+**Duration:** 5–10 minutes
 
-Duration: 5 minutes
+This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the Digital Good Network's research.
 
-## About the survey
+Please write in your own words and style, using your own voice. Don't worry about sounding 'academic'! And please be brief – short responses will work best in the artwork.
 
-This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the DGN's research.
-
-### Data usage and privacy terms
+## Data usage and privacy terms
 
 - Responses and mark-making submissions will be incorporated into the DGN artwork series.
-- Data will be retained for the duration of the project lifecycle and subsequent exhibitions.
-- All data will be stored securely per DGN privacy standards and fully anonymised in final artworks.
-- Contributions will be credited collectively in exhibition documentation, with text attributed to corresponding research projects where applicable.
+- Data will be retained for the duration of the Digital Good Network project (5 years), plus one year for any follow-up activities.
+- All data will be stored in a secure Google Business account owned by Stefanie Posavec.
+- Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.
 
-### Further questions or concerns?
-
+**Further questions / concerns?**
 Please email me directly at [stef@stefanieposavec.com](mailto:stef@stefanieposavec.com).
+
+## Consent
+
+- [ ] I consent to the use of my survey responses and my mark-making submissions in the DGN artwork series.
+
+---
 
 ## Questions
 
-**Guidance:**
+### 1. Your name
+`[Single-line text input]`
 
-- **Write in your style:** Write in your own words, using your own voice.
-- **Be concise:** Please keep answers brief; shorter responses work best in the artwork.
+### 2. Email address
+`[Email input]`
 
-1. Your name — single-line text input, required
-2. Email address — email input, required
-3. Your DGN project title — single-line text input, required
-4. Summarise your project findings for a general audience. — textarea, max 20 words, required
-5. Describe the 'digital good' in no more than ten words. — textarea, max 10 words, required
-6. What defines a good digital society? — textarea, max 15 words, required
-7. How has your understanding of the digital good evolved through your research? — textarea, max 15 words, required
-8. What advice would you offer policymakers working toward the digital good? — textarea, max 15 words, required
+### 3. Your DGN project title or project affiliation
+`[Single-line text input]`
+
+### 4. What does a good digital society look like? What does 'the digital good' look like in relation to the topic or issue that you researched on DGN?
+`[Textarea, max 100 words]`
+
+### 5. What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?
+
+**5.1 Who is this advice for?**
+`[Textarea, max 15 words]`
+
+**5.2 What is this advice?**
+`[Textarea, max 100 words]`
+
+---
 
 ## Mark-making submission
 
@@ -45,39 +57,40 @@ Please email me directly at [stef@stefanieposavec.com](mailto:stef@stefanieposav
 
 ### 1. Long line
 
-Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, expressive or minimal as you prefer.
+Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, or expressive or minimal as you prefer.
 
-[PLACEHOLDER: example image of what responses might look like]
+`[Example image of what responses might look like will go here]`
 
-[PLACEHOLDER: long line artboard]
+`[Long line artboard will go here]`
+
+Now, try drawing another long line that looks different than the line you drew above.
+
+`[Long line artboard will go here]`
 
 ### 2. Short line
 
-Draw another line from the dot on the left to the dot on the right. Try making a mark that looks different than the line you drew above.
+Draw another line from the dot on the left to the dot on the right. Try making a mark that looks different than the long lines you drew above.
 
-[PLACEHOLDER: example image of what responses might look like]
+`[Example image of what responses to this might look like will go here]`
 
-[PLACEHOLDER: short line artboard]
+`[Short line artboard will go here]`
+
+Now, draw another short line below.
+
+`[Short line artboard will go here]`
 
 ### 3. Dot
 
-Draw a dot or radial motif that is no smaller than the central circle and no bigger than the larger circle. How simple or detailed, playful or restrained is up to you!
+Draw a dot. It can be a simple circle, a scribble, a burst, a swirl: anything that is round(-ish). Make sure your drawing is larger than the inner circle and smaller than the outer one.
 
-[PLACEHOLDER: example image of what responses might look like]
+`[Example image of what responses to this might look like will go here]`
 
-[PLACEHOLDER: dot artboard]
+`[Dot artboard will go here]`
 
-## Consent
+**Your final drawing:** can you draw one more dot in a different style?
 
-By submitting this survey, I consent to the use of my survey responses, my mark-making submissions and text from currently published materials in the DGN artwork series.
-
-I also consent to the use of (optional):
-
-- Text from the most recent internal DGN progress report — checkbox
-  - (Note: You will receive proposed quotes in advance for review.)
-
-Additional notes or conditions regarding consent — textarea
+`[Dot artboard will go here]`
 
 ---
 
-[Submit button]
+`[Submit button]`
