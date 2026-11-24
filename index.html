@@ -302,6 +302,12 @@
   .consent-list .option input { margin-top: 3px; flex: none; }
   .consent-note { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
   .mark-question p { margin: 0; max-width: 60ch; }
+  /* Question text wraps at the same width as the intro paragraphs (60ch at 15px) */
+  .q-label { max-width: 540px; }
+  /* Drawing titles a step up, so they stand out between the boards */
+  .mark-question > .q-label { font-size: 19px; }
+  /* Consent tick box sits closer to its heading */
+  #consent { margin-top: -16px; }
   /* Example marks: drawn from real sketchpad files by examples/build_examples.py.
      Every example is the same height (all boards are 75mm tall), so they share
      one scale: three long lines fill a row, and the rest follow from that. */
@@ -335,7 +341,7 @@
   <section class="section" id="privacy">
     <h2>Data usage and privacy terms</h2>
     <ul class="about-list">
-      <li>Responses and mark-making submissions will be incorporated into the DGN artwork series.</li>
+      <li>Responses and mark-making submissions will be incorporated into the Digital Good Network artwork series.</li>
       <li>Data will be retained for the duration of the Digital Good Network project (5 years), plus one year for any follow-up activities.</li>
       <li>All data will be stored in a secure Google Business account owned by Stefanie Posavec.</li>
       <li>Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.</li>

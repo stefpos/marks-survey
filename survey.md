@@ -9,7 +9,7 @@ Please write in your own words and style, using your own voice. Don't worry abou
 
 ## Data usage and privacy terms
 
-- Responses and mark-making submissions will be incorporated into the DGN artwork series.
+- Responses and mark-making submissions will be incorporated into the Digital Good Network artwork series.
 - Data will be retained for the duration of the Digital Good Network project (5 years), plus one year for any follow-up activities.
 - All data will be stored in a secure Google Business account owned by Stefanie Posavec.
 - Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.
