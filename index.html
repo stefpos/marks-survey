@@ -53,6 +53,7 @@
     gap: 32px;
   }
   header { display: flex; flex-direction: column; gap: 8px; }
+  main { display: flex; flex-direction: column; gap: 32px; }
   .eyebrow {
     font-family: var(--mono);
     font-size: 11px;
@@ -326,6 +327,8 @@
     <p class="byline">Created by <a href="http://www.stefanieposavec.com">Stefanie Posavec</a></p>
   </header>
 
+  <main>
+
   <section class="section" id="about">
     <p>This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the Digital Good Network's research.</p>
     <p>Please write in your own words and style, using your own voice. Don't worry about sounding 'academic'! And please be brief – short responses will work best in the artwork.</p>
@@ -512,6 +515,7 @@
       <textarea id="dataOut" readonly></textarea>
     </div>
   </section>
+  </main>
 
 </div>
 
@@ -733,6 +737,13 @@
   // ---- One drawing board ----
   // Each board has its own canvas, strokes, undo and clear.
   let lastUsed = null; // the board Cmd/Ctrl+Z undoes
+  // Reads a short message out to screen readers through the page's status line
+  function announce(text) {
+    const status = document.getElementById('formStatus');
+    status.textContent = '';
+    setTimeout(() => { status.textContent = text; }, 50); // cleared first so a repeat is read again
+  }
+
   function makeBoard(spec, host) {
     host.append(document.getElementById('boardTemplate').content.cloneNode(true));
     const wrap = host.querySelector('.canvas-wrap');
@@ -746,7 +757,6 @@
     const controls = host.querySelector('.draw-controls');
     if (spec.repeat) host.querySelector('.hint').remove(); // second boards skip the how-to line
     canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', spec.title + ' drawing area');
     canvas.tabIndex = -1; // so an error can move focus here
 
     const bd = { spec: spec, strokes: [], current: null };
@@ -830,6 +840,9 @@
 
     function updateDrawState() {
       const n = bd.strokes.length;
+      // Screen readers hear whether anything has been drawn yet
+      canvas.setAttribute('aria-label', spec.title + ' drawing area, ' +
+        (n ? n + (n === 1 ? ' stroke' : ' strokes') : 'no strokes yet'));
       undoBtn.disabled = clearBtn.disabled = !n;
       if (n) clearError(spec.questionId);
     }
@@ -891,6 +904,7 @@
       bd.strokes.push(bd.current);
       paintStroke(cctx, bd.current, screenScale());
       edgeNote.hidden = !bd.current.outOfBounds;
+      if (bd.current.outOfBounds) announce('Part of that mark went past the edge of the ' + spec.title.toLowerCase() + ' board. You can undo it.');
       bd.current = null;
       penMm = null;
       requestRedraw();
