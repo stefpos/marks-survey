@@ -12,16 +12,15 @@
  */
 
 const JSON_FOLDER_NAME = 'json';
-const EXPECTED_FORMAT = 'mark-survey/2'; // three drawings: line, short, dot
+const EXPECTED_FORMAT = 'mark-survey/3'; // six drawings: two each of line, short, dot
 const MAX_BYTES = 5 * 1024 * 1024; // reject anything over 5MB
 
 const HEADERS = [
   'receivedAt', 'responseId', 'openedAt', 'submittedAt', 'secondsOnPage',
-  'q1 name', 'q2 email', 'q3 DGN project title', 'q4 project findings',
-  'q5 digital good in ten words', 'q6 good digital society',
-  'q7 understanding evolved', 'q8 advice for policymakers',
-  'consent progress report', 'consent notes',
-  'line strokes', 'short strokes', 'dot strokes', 'strokesPastEdge',
+  'consent', 'q1 name', 'q2 email', 'q3 DGN project title or affiliation',
+  'q4 good digital society', 'q5.1 advice is for', 'q5.2 advice',
+  'line strokes', 'line-2 strokes', 'short strokes', 'short-2 strokes',
+  'dot strokes', 'dot-2 strokes', 'strokesPastEdge',
   'pointCount', 'inputTypes', 'jsonFile'
 ];
 
@@ -66,6 +65,7 @@ function checkResponse(d) {
   if (d.format !== EXPECTED_FORMAT) return 'Unknown format';
   if (typeof d.responseId !== 'string' || !/^[A-Za-z0-9-]{8,64}$/.test(d.responseId)) return 'Bad response ID';
   if (!d.session || !d.answers || !Array.isArray(d.drawings)) return 'Missing sections';
+  if (d.answers.consent !== 'yes') return 'Consent not given';
   for (const name of DRAWING_NAMES) {
     const dr = drawingFor(d, name);
     if (!dr || !Array.isArray(dr.strokes) || !dr.strokes.length) return 'Missing ' + name + ' drawing';
@@ -73,7 +73,7 @@ function checkResponse(d) {
   return null;
 }
 
-const DRAWING_NAMES = ['line', 'short', 'dot'];
+const DRAWING_NAMES = ['line', 'line-2', 'short', 'short-2', 'dot', 'dot-2'];
 
 function drawingFor(d, name) {
   return d.drawings.filter(dr => dr && dr.template === name)[0];
@@ -112,14 +112,11 @@ function store(d, body) {
     safe(d.session.openedAt),
     safe(d.session.submittedAt),
     secondsOnPage,
-    safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5), safe(a.q6), safe(a.q7), safe(a.q8),
-    safe(a.c2), safe(a.c5),
-    drawingFor(d, 'line').strokes.length,
-    drawingFor(d, 'short').strokes.length,
-    drawingFor(d, 'dot').strokes.length,
+    safe(a.consent), safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5a), safe(a.q5b),
+  ].concat(DRAWING_NAMES.map(name => drawingFor(d, name).strokes.length), [
     pastEdge, points, safe(types),
     file.getUrl()
-  ]);
+  ]));
 
   return { fileName: fileName, duplicate: false };
 }
