@@ -296,6 +296,8 @@
   .rules { font-weight: 500; }
   .section h3 { margin: 8px 0 0; font-size: 15px; font-weight: 600; line-height: 1.3; }
   .consent-list { display: flex; flex-direction: column; gap: 8px; }
+  .question-group { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+  .question-group > .q-label { margin: 0; }
   .consent-list .option { align-items: flex-start; line-height: 1.4; }
   .consent-list .option input { margin-top: 3px; flex: none; }
   .consent-note { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
@@ -320,35 +322,43 @@
 <div class="wrap">
 
   <header>
-    <span class="eyebrow">Duration: 5 minutes</span>
+    <span class="eyebrow">Duration: 5–10 minutes</span>
     <h1>Digital Good Network art commission: survey</h1>
     <p class="byline">Created by <a href="http://www.stefanieposavec.com">Stefanie Posavec</a></p>
   </header>
 
   <section class="section" id="about">
-    <h2>About the survey</h2>
-    <p>This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the DGN's research.</p>
-    <h3>Data usage and privacy terms</h3>
+    <p>This is a survey to collect material to make a series of large-scale artworks that celebrate and communicate the Digital Good Network's research.</p>
+    <p>Please write in your own words and style, using your own voice. Don't worry about sounding 'academic'! And please be brief – short responses will work best in the artwork.</p>
+  </section>
+
+  <section class="section" id="privacy">
+    <h2>Data usage and privacy terms</h2>
     <ul class="about-list">
       <li>Responses and mark-making submissions will be incorporated into the DGN artwork series.</li>
-      <li>Data will be retained for the duration of the project lifecycle and subsequent exhibitions.</li>
-      <li>All data will be stored securely per DGN privacy standards and fully anonymised in final artworks.</li>
-      <li>Contributions will be credited collectively in exhibition documentation, with text attributed to corresponding research projects where applicable.</li>
+      <li>Data will be retained for the duration of the Digital Good Network project (5 years), plus one year for any follow-up activities.</li>
+      <li>All data will be stored in a secure Google Business account owned by Stefanie Posavec.</li>
+      <li>Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.</li>
     </ul>
-    <h3>Further questions or concerns?</h3>
-    <p>Please email me directly at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</p>
+    <p><strong>Further questions / concerns?</strong><br>Please email me directly at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</p>
   </section>
 
   <form id="survey" novalidate>
 
     <div class="section">
+      <h2>Consent</h2>
+    </div>
+
+    <div class="question" id="consent">
+      <div class="consent-list">
+        <label class="option"><input type="checkbox" id="consentinput" name="consent" required> <span>I consent to the use of my survey responses and my mark-making submissions in the DGN artwork series.</span></label>
+      </div>
+      <p class="error-msg" hidden>Tick the box to give your consent before submitting.</p>
+    </div>
+
+    <div class="section">
       <h2>Questions</h2>
-      <p class="rules">Guidance:</p>
-      <ul class="about-list">
-        <li><strong>Write in your style:</strong> Write in your own words, using your own voice.</li>
-        <li><strong>Be concise:</strong> Please keep answers brief; shorter responses work best in the artwork.</li>
-      </ul>
-      <p>All questions need an answer, except those marked Optional.</p>
+      <p>All questions need an answer.</p>
     </div>
 
     <div class="question" id="q1">
@@ -364,44 +374,34 @@
     </div>
 
     <div class="question" id="q3">
-      <label class="q-label" for="q3input"><span class="q-num">03</span><span>Your DGN project title</span></label>
+      <label class="q-label" for="q3input"><span class="q-num">03</span><span>Your DGN project title or project affiliation</span></label>
       <input type="text" id="q3input" name="q3" maxlength="200" required>
-      <p class="error-msg" hidden>Enter your project title.</p>
+      <p class="error-msg" hidden>Enter your project title or affiliation.</p>
     </div>
 
     <div class="question" id="q4">
-      <label class="q-label" for="q4input"><span class="q-num">04</span><span>Summarise your project findings for a general audience.</span></label>
-      <textarea id="q4input" name="q4" required data-max-words="20" maxlength="500" aria-describedby="q4count"></textarea>
-      <p class="char-count" id="q4count">0 / 20 words</p>
+      <label class="q-label" for="q4input"><span class="q-num">04</span><span>What does a good digital society look like? What does 'the digital good' look like in relation to the topic or issue that you researched on DGN?</span></label>
+      <textarea id="q4input" name="q4" required data-max-words="100" maxlength="1500" aria-describedby="q4count"></textarea>
+      <p class="char-count" id="q4count">0 / 100 words</p>
       <p class="error-msg" hidden></p>
     </div>
 
-    <div class="question" id="q5">
-      <label class="q-label" for="q5input"><span class="q-num">05</span><span>Describe the 'digital good' in no more than ten words.</span></label>
-      <textarea id="q5input" name="q5" required data-max-words="10" maxlength="300" aria-describedby="q5count"></textarea>
-      <p class="char-count" id="q5count">0 / 10 words</p>
-      <p class="error-msg" hidden></p>
-    </div>
+    <div class="question-group" id="q5" role="group" aria-labelledby="q5lead">
+      <p class="q-label" id="q5lead"><span class="q-num">05</span><span>What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?</span></p>
 
-    <div class="question" id="q6">
-      <label class="q-label" for="q6input"><span class="q-num">06</span><span>What defines a good digital society?</span></label>
-      <textarea id="q6input" name="q6" required data-max-words="15" maxlength="400" aria-describedby="q6count"></textarea>
-      <p class="char-count" id="q6count">0 / 15 words</p>
-      <p class="error-msg" hidden></p>
-    </div>
+      <div class="question" id="q5a">
+        <label class="q-label" for="q5ainput"><span class="q-num">5.1</span><span>Who is this advice for?</span></label>
+        <textarea id="q5ainput" name="q5a" required data-max-words="15" maxlength="400" aria-describedby="q5acount"></textarea>
+        <p class="char-count" id="q5acount">0 / 15 words</p>
+        <p class="error-msg" hidden></p>
+      </div>
 
-    <div class="question" id="q7">
-      <label class="q-label" for="q7input"><span class="q-num">07</span><span>How has your understanding of the digital good evolved through your research?</span></label>
-      <textarea id="q7input" name="q7" required data-max-words="15" maxlength="400" aria-describedby="q7count"></textarea>
-      <p class="char-count" id="q7count">0 / 15 words</p>
-      <p class="error-msg" hidden></p>
-    </div>
-
-    <div class="question" id="q8">
-      <label class="q-label" for="q8input"><span class="q-num">08</span><span>What advice would you offer policymakers working toward the digital good?</span></label>
-      <textarea id="q8input" name="q8" required data-max-words="15" maxlength="400" aria-describedby="q8count"></textarea>
-      <p class="char-count" id="q8count">0 / 15 words</p>
-      <p class="error-msg" hidden></p>
+      <div class="question" id="q5b">
+        <label class="q-label" for="q5binput"><span class="q-num">5.2</span><span>What is this advice?</span></label>
+        <textarea id="q5binput" name="q5b" required data-max-words="100" maxlength="1500" aria-describedby="q5bcount"></textarea>
+        <p class="char-count" id="q5bcount">0 / 100 words</p>
+        <p class="error-msg" hidden></p>
+      </div>
     </div>
 
     <div class="section">
@@ -416,7 +416,7 @@
 
     <div class="question mark-question" id="m1">
       <span class="q-label"><span class="q-num">1</span>Long line</span>
-      <p>Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, expressive or minimal as you prefer.</p>
+      <p>Draw a line from the dot on the left to the dot on the right. This line can be as windy or straight, simple or detailed, or expressive or minimal as you prefer.</p>
       <!-- examples:line -->
       <div class="examples examples-line" role="group" aria-label="Example long lines">
         <svg viewBox="0 0 210 75" style="aspect-ratio:210/75" role="img" aria-label="Example long line 1"><circle cx="5" cy="37.5" r="2.5" fill="#4a9463"/><circle cx="205" cy="37.5" r="2.5" fill="#d0654c"/><path d="M5.62 37.63C5.76 37.48 6.13 37.07 6.46 36.72C6.79 36.38 7.12 36.03 7.59 35.55C8.07 35.08 8.65 34.5 9.32 33.87C10 33.24 10.86 32.46 11.65 31.78C12.43 31.1 13.29 30.38 14.03 29.79C14.77 29.2 15.45 28.69 16.08 28.23C16.72 27.77 17.3 27.38 17.84 27.02C18.38 26.65 18.86 26.34 19.32 26.05C19.79 25.76 20.18 25.52 20.61 25.28C21.05 25.05 21.47 24.84 21.92 24.65C22.37 24.45 22.83 24.27 23.33 24.1C23.82 23.94 24.32 23.79 24.87 23.66C25.42 23.53 25.99 23.42 26.62 23.3C27.25 23.19 27.94 23.1 28.67 22.99C29.39 22.88 30.2 22.78 30.98 22.66C31.75 22.55 32.57 22.42 33.32 22.31C34.07 22.19 34.8 22.07 35.47 21.97C36.15 21.87 36.77 21.78 37.38 21.72C37.99 21.66 38.55 21.63 39.12 21.61C39.69 21.58 40.23 21.58 40.8 21.58C41.36 21.59 41.93 21.59 42.5 21.63C43.07 21.67 43.66 21.73 44.24 21.84C44.81 21.95 45.4 22.1 45.96 22.27C46.53 22.44 47.1 22.64 47.64 22.86C48.17 23.07 48.69 23.29 49.17 23.55C49.65 23.8 50.11 24.06 50.53 24.38C50.96 24.69 51.36 25.04 51.72 25.42C52.08 25.8 52.41 26.22 52.71 26.68C53 27.13 53.27 27.63 53.51 28.15C53.75 28.68 53.97 29.25 54.15 29.81C54.33 30.38 54.48 30.97 54.58 31.53C54.69 32.1 54.76 32.66 54.8 33.19C54.85 33.73 54.86 34.25 54.86 34.72C54.86 35.2 54.84 35.64 54.78 36.05C54.72 36.46 54.63 36.82 54.5 37.17C54.37 37.53 54.19 37.86 54.01 38.18C53.83 38.5 53.61 38.79 53.4 39.09C53.19 39.39 52.97 39.66 52.74 39.95C52.51 40.25 52.27 40.55 52.03 40.86C51.78 41.17 51.51 41.5 51.26 41.81C51.01 42.13 50.76 42.45 50.52 42.75C50.28 43.05 50.05 43.34 49.82 43.61C49.59 43.89 49.36 44.16 49.13 44.41C48.9 44.67 48.66 44.92 48.42 45.15C48.17 45.39 47.93 45.62 47.67 45.84C47.42 46.06 47.15 46.27 46.88 46.49C46.6 46.7 46.31 46.9 46.02 47.11C45.72 47.31 45.41 47.52 45.09 47.71C44.78 47.9 44.47 48.08 44.15 48.24C43.84 48.4 43.53 48.54 43.21 48.66C42.89 48.79 42.56 48.9 42.24 48.98C41.92 49.07 41.58 49.14 41.28 49.18C40.97 49.23 40.68 49.26 40.41 49.27C40.13 49.28 39.89 49.29 39.65 49.25C39.41 49.21 39.18 49.16 38.97 49.01C38.75 48.87 38.52 48.63 38.35 48.38C38.18 48.12 38.03 47.78 37.94 47.49C37.84 47.21 37.82 46.95 37.79 46.69C37.75 46.43 37.76 46.21 37.75 45.95C37.74 45.69 37.74 45.43 37.74 45.14C37.75 44.85 37.74 44.53 37.77 44.21C37.8 43.89 37.83 43.55 37.91 43.22C38 42.88 38.11 42.55 38.27 42.19C38.44 41.83 38.65 41.45 38.9 41.06C39.15 40.66 39.46 40.24 39.78 39.84C40.1 39.43 40.45 39.02 40.82 38.61C41.19 38.2 41.57 37.8 42 37.37C42.43 36.94 42.89 36.5 43.39 36.03C43.9 35.56 44.45 35.05 45.02 34.54C45.6 34.03 46.22 33.5 46.86 32.97C47.5 32.44 48.17 31.89 48.86 31.36C49.54 30.82 50.25 30.29 50.95 29.76C51.65 29.23 52.37 28.7 53.06 28.19C53.75 27.68 54.43 27.16 55.09 26.68C55.76 26.19 56.4 25.72 57.06 25.27C57.73 24.83 58.38 24.4 59.07 23.99C59.76 23.58 60.47 23.18 61.22 22.82C61.97 22.45 62.75 22.09 63.57 21.79C64.38 21.49 65.25 21.21 66.11 21.02C66.98 20.82 67.88 20.69 68.76 20.61C69.64 20.53 70.53 20.5 71.39 20.52C72.26 20.53 73.12 20.58 73.94 20.72C74.77 20.85 75.57 21.05 76.34 21.31C77.12 21.57 77.86 21.93 78.58 22.27C79.3 22.61 79.99 23 80.64 23.35C81.29 23.71 81.9 24.05 82.47 24.39C83.04 24.73 83.55 25.06 84.05 25.38C84.56 25.7 85.02 26.01 85.48 26.31C85.94 26.62 86.38 26.91 86.82 27.21C87.25 27.51 87.67 27.8 88.08 28.12C88.48 28.44 88.87 28.76 89.25 29.12C89.63 29.47 89.99 29.84 90.35 30.24C90.72 30.63 91.08 31.05 91.42 31.49C91.75 31.92 92.08 32.38 92.38 32.83C92.68 33.28 92.95 33.72 93.2 34.19C93.46 34.65 93.69 35.11 93.9 35.6C94.11 36.09 94.31 36.6 94.46 37.13C94.62 37.66 94.74 38.22 94.83 38.78C94.93 39.34 94.99 39.92 95.04 40.47C95.09 41.02 95.12 41.56 95.13 42.08C95.13 42.6 95.14 43.09 95.08 43.59C95.01 44.09 94.91 44.6 94.75 45.1C94.59 45.6 94.35 46.1 94.1 46.58C93.85 47.06 93.54 47.54 93.24 47.98C92.94 48.43 92.62 48.86 92.3 49.25C91.98 49.65 91.66 50.01 91.34 50.36C91.02 50.71 90.71 51.04 90.4 51.35C90.09 51.66 89.78 51.96 89.49 52.23C89.2 52.5 88.92 52.73 88.64 52.95C88.35 53.16 88.08 53.35 87.79 53.52C87.49 53.7 87.2 53.86 86.89 54.01C86.58 54.16 86.25 54.31 85.92 54.44C85.58 54.57 85.22 54.69 84.85 54.81C84.49 54.93 84.1 55.04 83.71 55.16C83.33 55.27 82.93 55.38 82.53 55.49C82.13 55.59 81.72 55.7 81.31 55.79C80.9 55.88 80.49 55.96 80.09 56.04C79.69 56.12 79.3 56.19 78.92 56.26C78.54 56.33 78.17 56.4 77.83 56.46C77.48 56.52 77.16 56.59 76.86 56.64C76.57 56.69 76.32 56.74 76.06 56.77C75.79 56.8 75.57 56.83 75.29 56.82C75.01 56.8 74.68 56.78 74.37 56.68C74.06 56.57 73.72 56.39 73.45 56.18C73.18 55.98 72.96 55.71 72.76 55.43C72.55 55.15 72.39 54.85 72.22 54.5C72.04 54.15 71.86 53.76 71.72 53.33C71.58 52.9 71.45 52.41 71.36 51.9C71.27 51.38 71.22 50.82 71.2 50.23C71.17 49.64 71.16 49 71.2 48.35C71.23 47.69 71.27 46.99 71.39 46.3C71.51 45.6 71.67 44.88 71.9 44.19C72.13 43.5 72.43 42.81 72.75 42.16C73.07 41.52 73.43 40.89 73.81 40.3C74.18 39.71 74.57 39.17 74.99 38.64C75.4 38.11 75.83 37.63 76.29 37.13C76.75 36.64 77.23 36.16 77.75 35.66C78.27 35.16 78.79 34.67 79.39 34.14C79.99 33.61 80.62 33.08 81.36 32.49C82.1 31.9 82.93 31.27 83.84 30.6C84.76 29.92 85.77 29.2 86.85 28.45C87.92 27.71 89.08 26.92 90.28 26.11C91.48 25.3 92.78 24.44 94.03 23.61C95.28 22.78 96.48 21.97 97.8 21.15C99.12 20.33 100.54 19.46 101.97 18.67C103.39 17.89 105.09 17.01 106.33 16.43C107.56 15.85 108.56 15.47 109.39 15.2C110.22 14.92 110.73 14.89 111.33 14.81C111.93 14.72 112.47 14.7 113 14.69C113.53 14.69 114.01 14.7 114.52 14.78C115.04 14.85 115.55 14.95 116.09 15.12C116.62 15.28 117.18 15.52 117.74 15.77C118.3 16.02 118.87 16.33 119.45 16.64C120.03 16.95 120.62 17.29 121.22 17.63C121.81 17.98 122.41 18.32 123.02 18.72C123.62 19.11 124.24 19.53 124.84 20.01C125.44 20.49 126.05 21.02 126.61 21.59C127.16 22.16 127.67 22.72 128.16 23.45C128.64 24.18 129.11 25.06 129.52 25.96C129.93 26.87 130.32 28.04 130.6 28.89C130.88 29.73 131.03 30.45 131.17 31.04C131.31 31.62 131.36 31.99 131.43 32.41C131.51 32.84 131.57 33.2 131.63 33.6C131.68 34 131.72 34.36 131.75 34.8C131.78 35.24 131.79 35.72 131.8 36.23C131.81 36.74 131.81 37.31 131.81 37.86C131.82 38.41 131.82 38.99 131.81 39.54C131.81 40.09 131.81 40.64 131.78 41.16C131.75 41.69 131.71 42.2 131.64 42.67C131.57 43.14 131.47 43.58 131.35 43.98C131.24 44.38 131.1 44.74 130.95 45.1C130.8 45.45 130.64 45.77 130.47 46.09C130.29 46.42 130.1 46.72 129.89 47.03C129.69 47.33 129.47 47.63 129.24 47.93C129.02 48.23 128.79 48.54 128.56 48.83C128.33 49.13 128.09 49.42 127.86 49.7C127.64 49.98 127.42 50.25 127.19 50.53C126.97 50.81 126.75 51.09 126.53 51.36C126.31 51.64 126.08 51.92 125.86 52.18C125.65 52.44 125.43 52.68 125.22 52.92C125.01 53.15 124.81 53.38 124.61 53.58C124.41 53.79 124.22 53.98 124.03 54.16C123.84 54.33 123.67 54.5 123.48 54.65C123.29 54.79 123.1 54.93 122.89 55.03C122.67 55.12 122.56 55.23 122.19 55.22C121.82 55.22 121.4 55.19 120.66 54.97C119.92 54.76 118.68 54.33 117.74 53.95C116.8 53.58 115.7 53.06 115.02 52.74C114.35 52.42 114.05 52.25 113.71 52.03C113.36 51.81 113.19 51.66 112.95 51.43C112.71 51.2 112.46 50.9 112.25 50.63C112.05 50.37 111.89 50.11 111.72 49.85C111.55 49.59 111.41 49.33 111.26 49.06C111.11 48.79 110.96 48.49 110.81 48.21C110.67 47.92 110.52 47.63 110.38 47.36C110.25 47.08 110.11 46.82 109.99 46.57C109.87 46.32 109.76 46.09 109.67 45.85C109.58 45.61 109.51 45.39 109.44 45.13C109.38 44.88 109.31 44.63 109.28 44.31C109.26 44 109.22 43.67 109.27 43.26C109.33 42.85 109.41 42.38 109.61 41.85C109.82 41.31 110.12 40.69 110.52 40.04C110.92 39.4 111.43 38.69 112 37.99C112.58 37.28 113.25 36.55 113.95 35.82C114.66 35.1 115.44 34.35 116.23 33.65C117.01 32.94 117.85 32.24 118.67 31.58C119.49 30.92 120.34 30.3 121.15 29.71C121.95 29.12 122.75 28.56 123.5 28.05C124.25 27.54 124.98 27.06 125.67 26.63C126.36 26.19 127.02 25.8 127.64 25.45C128.25 25.09 128.82 24.78 129.36 24.51C129.91 24.24 130.39 24.02 130.89 23.82C131.39 23.62 131.87 23.46 132.37 23.32C132.86 23.19 133.35 23.08 133.86 22.99C134.37 22.9 134.88 22.85 135.41 22.81C135.94 22.77 136.49 22.75 137.06 22.74C137.64 22.73 138.24 22.73 138.87 22.73C139.49 22.72 140.16 22.72 140.82 22.73C141.49 22.73 142.18 22.73 142.87 22.76C143.55 22.78 144.24 22.82 144.91 22.89C145.58 22.95 146.24 23.04 146.89 23.16C147.54 23.28 148.16 23.42 148.79 23.6C149.41 23.78 150.01 23.98 150.62 24.25C151.23 24.52 151.84 24.81 152.45 25.21C153.06 25.6 153.68 26.05 154.28 26.6C154.87 27.15 155.48 27.8 156.02 28.51C156.57 29.23 157.1 30.05 157.54 30.92C157.99 31.78 158.37 32.75 158.69 33.71C159 34.67 159.24 35.7 159.43 36.67C159.63 37.64 159.76 38.62 159.86 39.54C159.95 40.45 160.01 41.31 160.02 42.16C160.04 43.01 160.02 43.8 159.93 44.62C159.85 45.43 159.7 46.24 159.51 47.07C159.31 47.9 159.03 48.77 158.76 49.59C158.49 50.42 158.17 51.26 157.88 52.02C157.59 52.77 157.29 53.49 157.02 54.12C156.75 54.75 156.5 55.31 156.24 55.81C155.98 56.32 155.73 56.75 155.47 57.15C155.2 57.56 154.93 57.91 154.66 58.23C154.38 58.55 154.09 58.82 153.8 59.07C153.51 59.31 153.22 59.52 152.93 59.7C152.64 59.88 152.36 60.03 152.08 60.17C151.81 60.3 151.53 60.4 151.27 60.5C151 60.59 150.73 60.67 150.48 60.73C150.22 60.79 149.97 60.84 149.73 60.87C149.5 60.91 149.27 60.92 149.04 60.93C148.82 60.94 148.61 60.95 148.4 60.92C148.18 60.89 147.97 60.86 147.75 60.77C147.53 60.68 147.29 60.55 147.06 60.36C146.83 60.17 146.58 59.94 146.34 59.65C146.11 59.36 145.87 59.03 145.64 58.63C145.4 58.23 145.17 57.78 144.95 57.27C144.74 56.77 144.52 56.2 144.34 55.6C144.17 54.99 144.02 54.33 143.91 53.64C143.81 52.94 143.75 52.19 143.71 51.43C143.67 50.68 143.65 49.89 143.67 49.13C143.68 48.38 143.69 47.62 143.79 46.88C143.89 46.14 144.03 45.43 144.26 44.7C144.49 43.96 144.8 43.24 145.2 42.45C145.6 41.67 146.07 40.86 146.66 39.99C147.24 39.11 147.93 38.16 148.69 37.21C149.45 36.26 150.32 35.24 151.2 34.28C152.08 33.33 153.02 32.36 153.95 31.48C154.88 30.6 155.84 29.76 156.79 28.98C157.75 28.21 158.72 27.5 159.68 26.85C160.65 26.2 161.63 25.62 162.6 25.09C163.56 24.56 164.53 24.11 165.48 23.69C166.43 23.27 167.37 22.91 168.29 22.57C169.21 22.23 170.12 21.94 171.01 21.66C171.9 21.38 172.77 21.12 173.63 20.89C174.48 20.66 175.33 20.45 176.13 20.27C176.92 20.09 177.7 19.94 178.39 19.83C179.09 19.71 179.72 19.64 180.3 19.58C180.88 19.52 181.4 19.5 181.88 19.49C182.37 19.47 182.81 19.47 183.2 19.49C183.59 19.51 183.93 19.53 184.23 19.58C184.52 19.64 184.74 19.7 184.97 19.81C185.21 19.92 185.41 20.08 185.61 20.26C185.82 20.44 186.04 20.68 186.21 20.89C186.38 21.11 186.51 21.32 186.63 21.56C186.74 21.8 186.82 22.04 186.91 22.36C187 22.67 187.08 23.06 187.16 23.45C187.24 23.85 187.31 24.31 187.37 24.74C187.44 25.16 187.49 25.6 187.54 26.01C187.58 26.43 187.62 26.84 187.65 27.24C187.69 27.64 187.72 28.05 187.75 28.43C187.79 28.81 187.82 29.18 187.85 29.53C187.89 29.87 187.92 30.19 187.97 30.5C188.01 30.82 188.06 31.11 188.12 31.4C188.17 31.7 188.24 31.98 188.3 32.27C188.36 32.57 188.43 32.86 188.48 33.16C188.54 33.47 188.6 33.79 188.65 34.1C188.7 34.42 188.75 34.75 188.79 35.05C188.83 35.36 188.86 35.66 188.88 35.93C188.9 36.21 188.91 36.45 188.91 36.71C188.92 36.96 188.93 37.19 188.92 37.44C188.91 37.7 188.92 37.96 188.85 38.26C188.78 38.56 188.68 38.88 188.5 39.25C188.33 39.61 188.06 40.03 187.77 40.46C187.48 40.89 187.11 41.38 186.77 41.83C186.43 42.29 186.06 42.78 185.72 43.21C185.39 43.65 185.06 44.07 184.76 44.47C184.45 44.87 184.17 45.25 183.9 45.6C183.63 45.96 183.39 46.3 183.16 46.62C182.94 46.93 182.74 47.22 182.55 47.5C182.36 47.77 182.2 48.02 182.04 48.27C181.87 48.52 181.72 48.75 181.56 48.98C181.39 49.21 181.23 49.43 181.05 49.66C180.86 49.89 180.67 50.11 180.45 50.37C180.22 50.63 179.96 50.9 179.68 51.22C179.39 51.53 179.06 51.9 178.74 52.26C178.42 52.62 178.07 53.02 177.76 53.38C177.45 53.74 177.15 54.11 176.89 54.42C176.63 54.74 176.41 55.03 176.21 55.27C176 55.51 175.84 55.73 175.67 55.87C175.49 56.01 175.31 56.11 175.14 56.1C174.98 56.09 174.82 55.97 174.68 55.79C174.55 55.61 174.43 55.33 174.32 55.03C174.2 54.72 174.09 54.36 174 53.97C173.9 53.57 173.8 53.13 173.73 52.65C173.66 52.16 173.6 51.6 173.56 51.05C173.52 50.5 173.51 49.9 173.49 49.35C173.48 48.81 173.48 48.29 173.48 47.79C173.47 47.3 173.47 46.84 173.48 46.37C173.5 45.91 173.5 45.43 173.56 44.98C173.63 44.53 173.72 44.08 173.88 43.66C174.03 43.24 174.25 42.86 174.51 42.47C174.77 42.09 175.08 41.73 175.42 41.36C175.76 41 176.15 40.64 176.57 40.28C176.99 39.93 177.46 39.58 177.95 39.24C178.45 38.9 178.99 38.57 179.53 38.26C180.07 37.96 180.64 37.66 181.2 37.4C181.76 37.14 182.33 36.91 182.88 36.7C183.44 36.48 184 36.29 184.54 36.13C185.08 35.97 185.61 35.83 186.11 35.73C186.6 35.63 187.07 35.58 187.53 35.54C187.99 35.5 188.42 35.5 188.85 35.5C189.28 35.49 189.7 35.49 190.1 35.5C190.5 35.5 190.9 35.5 191.26 35.52C191.62 35.54 191.96 35.57 192.27 35.62C192.58 35.68 192.86 35.76 193.12 35.85C193.38 35.94 193.59 36.04 193.84 36.15C194.08 36.25 194.31 36.36 194.57 36.49C194.84 36.62 195.15 36.76 195.44 36.91C195.73 37.06 196.03 37.23 196.3 37.39C196.58 37.55 196.82 37.7 197.07 37.85C197.32 37.99 197.55 38.13 197.81 38.25C198.07 38.37 198.33 38.48 198.61 38.59C198.9 38.69 199.22 38.78 199.55 38.86C199.87 38.95 200.23 39.02 200.55 39.08C200.86 39.15 201.18 39.21 201.44 39.26C201.71 39.3 201.93 39.34 202.15 39.36C202.38 39.38 202.6 39.38 202.8 39.39C203.01 39.39 203.22 39.39 203.37 39.39C203.52 39.39 203.65 39.39 203.7 39.39" fill="none" stroke="#000" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -428,9 +428,15 @@
       <p class="error-msg" hidden>Draw your long line before submitting.</p>
     </div>
 
+    <div class="question mark-question" id="m1b">
+      <p>Now, try drawing another long line that looks different than the line you drew above.</p>
+      <div class="board" data-board="line-2"></div>
+      <p class="error-msg" hidden>Draw your second long line before submitting.</p>
+    </div>
+
     <div class="question mark-question" id="m2">
       <span class="q-label"><span class="q-num">2</span>Short line</span>
-      <p>Draw another line from the dot on the left to the dot on the right. Try making a mark that looks different than the line you drew above.</p>
+      <p>Draw another line from the dot on the left to the dot on the right. Try making a mark that looks different than the long lines you drew above.</p>
       <!-- examples:short -->
       <div class="examples examples-short" role="group" aria-label="Example short lines">
         <svg viewBox="0 0 105 75" style="aspect-ratio:105/75" role="img" aria-label="Example short line 1"><circle cx="5" cy="37.5" r="2.5" fill="#4a9463"/><circle cx="100" cy="37.5" r="2.5" fill="#d0654c"/><path d="M4.96 37.72C5.23 37.61 5.87 37.36 6.61 37.09C7.36 36.82 8.4 36.42 9.4 36.11C10.4 35.79 11.47 35.47 12.62 35.18C13.77 34.89 14.84 34.67 16.29 34.34C17.75 34.02 19.51 33.63 21.34 33.22C23.17 32.81 25.34 32.33 27.29 31.88C29.24 31.43 31.36 30.92 33.05 30.51C34.74 30.1 36.21 29.73 37.45 29.42C38.69 29.12 39.59 28.91 40.48 28.68C41.37 28.45 42.05 28.25 42.78 28.05C43.52 27.85 44.13 27.65 44.89 27.5C45.65 27.35 46.52 27.21 47.36 27.13C48.2 27.05 49.04 27.04 49.93 27.02C50.81 27 51.75 27 52.69 27.02C53.62 27.03 54.72 27.04 55.55 27.09C56.39 27.15 57.14 27.25 57.69 27.37C58.25 27.49 58.58 27.64 58.89 27.79C59.21 27.93 59.38 28.08 59.57 28.24C59.77 28.4 59.91 28.57 60.06 28.75C60.22 28.92 60.36 29.11 60.53 29.29C60.7 29.48 60.85 29.66 61.09 29.87C61.33 30.08 61.64 30.33 61.96 30.55C62.28 30.77 62.67 31.01 63.02 31.21C63.37 31.41 63.69 31.57 64.04 31.75C64.4 31.93 64.76 32.11 65.15 32.29C65.53 32.46 65.86 32.62 66.34 32.81C66.82 33 67.33 33.2 68 33.42C68.68 33.64 69.46 33.92 70.39 34.14C71.33 34.37 72.46 34.58 73.6 34.76C74.75 34.95 76.17 35.1 77.26 35.26C78.34 35.41 79.29 35.56 80.1 35.7C80.91 35.84 81.31 35.96 82.12 36.08C82.94 36.2 83.75 36.31 84.97 36.44C86.19 36.57 87.95 36.71 89.45 36.85C90.94 36.99 92.68 37.14 93.93 37.26C95.19 37.38 96.17 37.51 96.97 37.59C97.77 37.66 98.27 37.69 98.72 37.72C99.17 37.74 99.4 37.72 99.65 37.73C99.91 37.74 100.07 37.76 100.25 37.77C100.42 37.78 100.62 37.79 100.69 37.79" fill="none" stroke="#000" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -442,9 +448,15 @@
       <p class="error-msg" hidden>Draw your short line before submitting.</p>
     </div>
 
+    <div class="question mark-question" id="m2b">
+      <p>Now, draw another short line below.</p>
+      <div class="board" data-board="short-2"></div>
+      <p class="error-msg" hidden>Draw your second short line before submitting.</p>
+    </div>
+
     <div class="question mark-question" id="m3">
       <span class="q-label"><span class="q-num">3</span>Dot</span>
-      <p>Draw a dot or radial motif that is no smaller than the central circle and no bigger than the larger circle. How simple or detailed, playful or restrained is up to you!</p>
+      <p>Draw a dot. It can be a simple circle, a scribble, a burst, a swirl: anything that is round(-ish). Make sure your drawing is larger than the inner circle and smaller than the outer one.</p>
       <!-- examples:dot -->
       <div class="examples examples-dot" role="group" aria-label="Example dots">
         <svg viewBox="0 0 75 75" style="aspect-ratio:75/75" role="img" aria-label="Example dot 1"><circle cx="37.5" cy="37.5" r="10" fill="none" stroke="#85857f" stroke-width="1" vector-effect="non-scaling-stroke"/><circle cx="37.5" cy="37.5" r="30" fill="none" stroke="#85857f" stroke-width="1" vector-effect="non-scaling-stroke"/><path d="M24.37 37.01C24.37 36.89 24.37 36.52 24.37 36.26C24.37 36 24.37 35.72 24.37 35.44C24.37 35.17 24.37 34.89 24.37 34.62C24.38 34.35 24.39 34.09 24.43 33.83C24.47 33.57 24.53 33.31 24.62 33.04C24.71 32.77 24.82 32.49 24.95 32.22C25.08 31.95 25.24 31.67 25.39 31.41C25.55 31.15 25.73 30.91 25.9 30.67C26.08 30.44 26.27 30.23 26.45 30.02C26.64 29.81 26.82 29.63 27.02 29.43C27.21 29.23 27.41 29.01 27.61 28.81C27.81 28.6 28.03 28.38 28.22 28.19C28.4 28 28.57 27.84 28.73 27.68C28.9 27.52 29.03 27.4 29.2 27.25C29.38 27.1 29.55 26.95 29.78 26.78C30 26.62 30.27 26.42 30.55 26.25C30.82 26.07 31.14 25.9 31.45 25.75C31.76 25.6 32.08 25.47 32.41 25.35C32.74 25.23 33.09 25.13 33.4 25.05C33.72 24.97 34.02 24.91 34.3 24.86C34.59 24.8 34.83 24.77 35.1 24.73C35.37 24.68 35.64 24.64 35.93 24.6C36.22 24.56 36.53 24.52 36.83 24.49C37.13 24.46 37.45 24.43 37.73 24.41C38.01 24.39 38.27 24.38 38.52 24.37C38.77 24.36 38.97 24.36 39.22 24.36C39.46 24.36 39.72 24.36 39.99 24.36C40.26 24.36 40.58 24.36 40.86 24.36C41.14 24.36 41.4 24.36 41.65 24.37C41.91 24.39 42.14 24.4 42.4 24.43C42.66 24.47 42.93 24.51 43.2 24.57C43.46 24.62 43.75 24.68 44.01 24.76C44.28 24.83 44.54 24.92 44.78 25.01C45.03 25.11 45.25 25.22 45.48 25.33C45.71 25.45 45.92 25.58 46.13 25.72C46.34 25.85 46.55 26 46.74 26.14C46.93 26.29 47.1 26.44 47.26 26.59C47.43 26.74 47.59 26.9 47.74 27.06C47.9 27.22 48.04 27.37 48.19 27.55C48.35 27.73 48.49 27.9 48.67 28.13C48.86 28.37 49.07 28.65 49.27 28.94C49.48 29.23 49.71 29.58 49.89 29.88C50.07 30.18 50.22 30.47 50.35 30.75C50.48 31.03 50.58 31.26 50.67 31.55C50.76 31.85 50.85 32.19 50.9 32.53C50.96 32.86 51 33.24 51.02 33.55C51.04 33.85 51.03 34.09 51.03 34.35C51.04 34.6 51.03 34.82 51.03 35.07C51.03 35.32 51.03 35.58 51.03 35.84C51.03 36.09 51.04 36.34 51.03 36.59C51.03 36.84 51.03 37.08 51.02 37.33C51.01 37.58 50.99 37.83 50.96 38.09C50.92 38.35 50.87 38.62 50.81 38.89C50.75 39.16 50.67 39.45 50.59 39.72C50.52 39.99 50.44 40.25 50.37 40.51C50.29 40.77 50.21 41.01 50.13 41.25C50.05 41.49 49.97 41.72 49.89 41.93C49.81 42.15 49.75 42.33 49.66 42.54C49.57 42.76 49.47 42.97 49.34 43.22C49.2 43.48 49.03 43.79 48.86 44.08C48.69 44.36 48.5 44.66 48.3 44.94C48.1 45.23 47.9 45.5 47.68 45.78C47.47 46.07 47.23 46.4 47.02 46.68C46.81 46.96 46.6 47.25 46.4 47.48C46.21 47.7 46.04 47.88 45.84 48.05C45.64 48.21 45.45 48.33 45.22 48.46C44.98 48.59 44.69 48.71 44.42 48.82C44.14 48.93 43.83 49.04 43.56 49.13C43.3 49.22 43.06 49.28 42.83 49.35C42.59 49.41 42.38 49.47 42.15 49.52C41.92 49.57 41.68 49.62 41.45 49.65C41.21 49.69 40.96 49.72 40.71 49.74C40.47 49.76 40.22 49.77 39.97 49.77C39.72 49.78 39.47 49.78 39.22 49.78C38.97 49.78 38.71 49.78 38.45 49.78C38.19 49.78 37.92 49.79 37.67 49.78C37.41 49.78 37.15 49.78 36.9 49.75C36.64 49.73 36.4 49.69 36.15 49.63C35.9 49.58 35.65 49.49 35.41 49.41C35.16 49.32 34.91 49.22 34.68 49.13C34.45 49.04 34.23 48.95 34.01 48.85C33.78 48.76 33.56 48.66 33.32 48.55C33.08 48.43 32.8 48.3 32.55 48.16C32.3 48.03 32.04 47.89 31.81 47.75C31.58 47.61 31.37 47.48 31.16 47.35C30.95 47.21 30.76 47.09 30.56 46.95C30.36 46.81 30.17 46.66 29.98 46.49C29.78 46.32 29.58 46.13 29.38 45.92C29.17 45.72 28.96 45.49 28.75 45.28C28.54 45.06 28.32 44.84 28.11 44.64C27.91 44.43 27.7 44.23 27.51 44.03C27.32 43.83 27.13 43.65 26.96 43.45C26.79 43.24 26.63 43.04 26.48 42.82C26.33 42.6 26.2 42.37 26.07 42.15C25.93 41.92 25.79 41.69 25.66 41.47C25.53 41.25 25.39 41.05 25.29 40.83C25.18 40.61 25.09 40.39 25.02 40.16C24.96 39.92 24.95 39.66 24.92 39.42C24.88 39.19 24.87 38.92 24.83 38.72C24.8 38.52 24.74 38.35 24.7 38.23C24.66 38.12 24.62 38.07 24.61 38.03" fill="none" stroke="#000" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -458,21 +470,10 @@
       <p class="error-msg" hidden>Draw your dot before submitting.</p>
     </div>
 
-    <div class="section">
-      <h2>Consent</h2>
-      <p>By submitting this survey, I consent to the use of my survey responses, my mark-making submissions and text from currently published materials in the DGN artwork series.</p>
-      <p id="consentIntro">I also consent to the use of (optional):</p>
-    </div>
-
-    <div class="question" id="consent" role="group" aria-labelledby="consentIntro">
-      <div class="consent-list">
-        <label class="option"><input type="checkbox" name="c2"> <span>Text from the most recent internal DGN progress report<span class="consent-note">Note: You will receive proposed quotes in advance for review.</span></span></label>
-      </div>
-    </div>
-
-    <div class="question" id="c5">
-      <label class="q-label" for="c5input"><span>Additional notes or conditions regarding consent <span class="optional">Optional</span></span></label>
-      <textarea id="c5input" name="c5" maxlength="1000"></textarea>
+    <div class="question mark-question" id="m3b">
+      <p><strong>Your final drawing:</strong> can you draw one more dot in a different style?</p>
+      <div class="board" data-board="dot-2"></div>
+      <p class="error-msg" hidden>Draw your final dot before submitting.</p>
     </div>
 
     <template id="boardTemplate">
@@ -541,7 +542,7 @@
   //   tiltX/tiltY pen angle in degrees (−90 to 90); 0 for mouse and touch
   const POINT_FIELDS = ['x', 'y', 't', 'pressure', 'tiltX', 'tiltY'];
 
-  // ---- The three artboards (copied from the sketchpad) ----
+  // ---- The three artboard shapes (copied from the sketchpad) ----
   // Guides are drawn on screen only; they are recorded in the response but
   // never part of the drawing itself.
   const BOARD_SPECS = {
@@ -569,24 +570,30 @@
     }
   };
 
+  // A second board of each shape: same artboard, its own question and name
+  [['line', 'm1b', 'Second long line'], ['short', 'm2b', 'Second short line'], ['dot', 'm3b', 'Final dot']]
+    .forEach(([base, qid, title]) => {
+      BOARD_SPECS[base + '-2'] = Object.assign({}, BOARD_SPECS[base], { questionId: qid, name: base + '-2', title: title });
+    });
+
   // Questions as they appear on the page, so each response describes itself
   const QUESTIONS = [
+    { id: 'consent', type: 'consent', text: 'I consent to the use of my survey responses and my mark-making submissions in the DGN artwork series.', required: true },
     { id: 'q1', type: 'short-text', text: 'Your name', required: true },
     { id: 'q2', type: 'email', text: 'Email address', required: true },
-    { id: 'q3', type: 'short-text', text: 'Your DGN project title', required: true },
-    { id: 'q4', type: 'long-text', text: 'Summarise your project findings for a general audience.', maxWords: 20, required: true },
-    { id: 'q5', type: 'long-text', text: 'Describe the \'digital good\' in no more than ten words.', maxWords: 10, required: true },
-    { id: 'q6', type: 'long-text', text: 'What defines a good digital society?', maxWords: 15, required: true },
-    { id: 'q7', type: 'long-text', text: 'How has your understanding of the digital good evolved through your research?', maxWords: 15, required: true },
-    { id: 'q8', type: 'long-text', text: 'What advice would you offer policymakers working toward the digital good?', maxWords: 15, required: true },
+    { id: 'q3', type: 'short-text', text: 'Your DGN project title or project affiliation', required: true },
+    { id: 'q4', type: 'long-text', text: 'What does a good digital society look like? What does \'the digital good\' look like in relation to the topic or issue that you researched on DGN?', maxWords: 100, required: true },
+    { id: 'q5a', type: 'long-text', group: 'What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?', text: 'Who is this advice for?', maxWords: 15, required: true },
+    { id: 'q5b', type: 'long-text', group: 'What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?', text: 'What is this advice?', maxWords: 100, required: true },
     { id: 'm1', type: 'drawing', board: 'line', text: 'Long line', required: true },
+    { id: 'm1b', type: 'drawing', board: 'line-2', text: 'Second long line', required: true },
     { id: 'm2', type: 'drawing', board: 'short', text: 'Short line', required: true },
+    { id: 'm2b', type: 'drawing', board: 'short-2', text: 'Second short line', required: true },
     { id: 'm3', type: 'drawing', board: 'dot', text: 'Dot', required: true },
-    { id: 'c2', type: 'consent', text: 'Consent: text from the most recent internal DGN progress report', required: false },
-    { id: 'c5', type: 'long-text', text: 'Additional notes or conditions regarding consent', required: false }
+    { id: 'm3b', type: 'drawing', board: 'dot-2', text: 'Final dot', required: true }
   ];
-  const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'c5'];
-  const CONSENT_IDS = ['c2'];
+  const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5a', 'q5b'];
+  const CONSENT_IDS = ['consent'];
   const WORD_LIMITED = [...document.querySelectorAll('textarea[data-max-words]')];
 
   const openedAt = new Date(performance.timeOrigin || Date.now()).toISOString();
@@ -956,7 +963,7 @@
   // ---- Sizing all boards from the column width ----
   const form = document.getElementById('survey');
   function fitAll() {
-    const colW = document.getElementById('q8').clientWidth;
+    const colW = document.getElementById('q4').clientWidth;
     boards.forEach(b => b.fit(colW));
   }
   let fitQueued = false;
@@ -1018,6 +1025,7 @@
     if (e.target.name === 'q1' && e.target.value.trim()) clearError('q1');
     if (e.target.name === 'q2' && emailOk(e.target)) clearError('q2');
     if (e.target.name === 'q3' && e.target.value.trim()) clearError('q3');
+    if (e.target.name === 'consent' && e.target.checked) clearError('consent');
   });
 
   function emailOk(input) {
@@ -1037,6 +1045,7 @@
 
   function validate(a) {
     const missing = [];
+    if (a.consent !== 'yes') missing.push('consent');
     if (!a.q1) missing.push('q1');
     if (!emailOk(form.q2)) missing.push('q2');
     if (!a.q3) missing.push('q3');
@@ -1045,7 +1054,7 @@
       else if (overLimit(t)) missing.push(t.name);
     });
     boards.forEach(b => { if (!b.strokes.length) missing.push(b.spec.questionId); });
-    ['q1', 'q2', 'q3'].concat(WORD_LIMITED.map(t => t.name), boards.map(b => b.spec.questionId))
+    ['consent', 'q1', 'q2', 'q3'].concat(WORD_LIMITED.map(t => t.name), boards.map(b => b.spec.questionId))
       .forEach(id => missing.includes(id) ? showError(id) : clearError(id));
     return missing;
   }
@@ -1124,7 +1133,7 @@
 
     const submitted = new Date();
     const data = {
-      format: 'mark-survey/2',
+      format: 'mark-survey/3',
       responseId: responseId,
       session: {
         openedAt: openedAt,                     // page opened (UTC)
@@ -1133,7 +1142,7 @@
       },
       questions: QUESTIONS,
       answers: answers,                         // keyed by question id
-      drawings: boards.map(b => b.toData())     // line, short, dot — in page order
+      drawings: boards.map(b => b.toData())     // six boards, in page order
     };
 
     lastSubmission = {
@@ -1246,7 +1255,7 @@
   });
   document.getElementById('newBtn').addEventListener('click', () => location.reload());
 
-  // ---- Word counters (q4–q8) ----
+  // ---- Word counters (q4, q5a, q5b) ----
   // Soft limit: typing past it is allowed, but the counter and message show
   // it, and the survey won't submit until the answer is trimmed.
   function wordCount(text) {
