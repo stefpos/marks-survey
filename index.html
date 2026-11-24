@@ -168,16 +168,6 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
-  .board-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
   .draw-controls {
     display: flex;
     align-items: center;
@@ -298,6 +288,7 @@
   .consent-list { display: flex; flex-direction: column; gap: 8px; }
   .question-group { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
   .question-group > .q-label { margin: 0; }
+  .question-group .question > .q-label { font-weight: 400; }
   .consent-list .option { align-items: flex-start; line-height: 1.4; }
   .consent-list .option input { margin-top: 3px; flex: none; }
   .consent-note { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
@@ -322,6 +313,8 @@
   }
   .board { display: flex; flex-direction: column; gap: 10px; }
   .board .canvas-wrap { align-self: flex-start; max-width: 100%; }
+  .board .draw-controls { align-self: flex-start; }
+  .board .control-group { margin-left: auto; }
 </style>
 </head>
 <body>
@@ -487,10 +480,6 @@
       <div class="canvas-wrap">
         <canvas></canvas>
       </div>
-      <div class="board-meta">
-        <span class="stroke-count">No strokes yet</span>
-        <span class="board-label"></span>
-      </div>
       <p class="edge-note" hidden>Part of that mark went past the edge. <button type="button" class="link edge-undo">Undo it</button></p>
       <div class="draw-controls">
         <span></span>
@@ -579,7 +568,7 @@
   // A second board of each shape: same artboard, its own question and name
   [['line', 'm1b', 'Second long line'], ['short', 'm2b', 'Second short line'], ['dot', 'm3b', 'Final dot']]
     .forEach(([base, qid, title]) => {
-      BOARD_SPECS[base + '-2'] = Object.assign({}, BOARD_SPECS[base], { questionId: qid, name: base + '-2', title: title });
+      BOARD_SPECS[base + '-2'] = Object.assign({}, BOARD_SPECS[base], { questionId: qid, name: base + '-2', title: title, repeat: true });
     });
 
   // Questions as they appear on the page, so each response describes itself
@@ -751,14 +740,14 @@
     const ctx = canvas.getContext('2d');
     const committed = document.createElement('canvas');
     const cctx = committed.getContext('2d');
-    const strokeCountEl = host.querySelector('.stroke-count');
     const undoBtn = host.querySelector('.undo-btn');
     const clearBtn = host.querySelector('.clear-btn');
     const edgeNote = host.querySelector('.edge-note');
+    const controls = host.querySelector('.draw-controls');
+    if (spec.repeat) host.querySelector('.hint').remove(); // second boards skip the how-to line
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', spec.title + ' drawing area');
     canvas.tabIndex = -1; // so an error can move focus here
-    host.querySelector('.board-label').textContent = spec.mmW + ' × ' + spec.mmH + 'mm';
 
     const bd = { spec: spec, strokes: [], current: null };
     let strokeStartTime = 0;
@@ -832,6 +821,7 @@
       lastKey = key;
       const dpr = window.devicePixelRatio || 1;
       wrap.style.width = (cssW + 2) + 'px';
+      controls.style.minWidth = (cssW + 2) + 'px'; // Undo/Clear line up with the board's right edge
       canvas.style.height = cssH + 'px';
       canvas.width = committed.width = Math.round(cssW * dpr);
       canvas.height = committed.height = Math.round(cssH * dpr);
@@ -840,7 +830,6 @@
 
     function updateDrawState() {
       const n = bd.strokes.length;
-      strokeCountEl.textContent = n ? n + (n === 1 ? ' stroke' : ' strokes') : 'No strokes yet';
       undoBtn.disabled = clearBtn.disabled = !n;
       if (n) clearError(spec.questionId);
     }
