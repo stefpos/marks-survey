@@ -10,12 +10,12 @@ Please write in your own words and style, using your own voice. Don't worry abou
 ## Data usage and privacy terms
 
 - Responses and mark-making submissions will be incorporated into the Digital Good Network artwork series.
-- Data will be retained for the duration of the Digital Good Network project (5 years), plus one year for any follow-up activities.
+- Data will be retained for one year after the Digital Good Network ends, to enable potential follow-up activities.
 - All data will be stored in a secure Google Business account owned by Stefanie Posavec.
 - Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.
 
 **Further questions / concerns?**
-Please email me directly at [stef@stefanieposavec.com](mailto:stef@stefanieposavec.com).
+Please email me directly at [stef@stefanieposavec.com](mailto:stef@stefanieposavec.com) or you can contact Ruth (Digital Good Network Manager) on [ruth.lauener@sheffield.ac.uk](mailto:ruth.lauener@sheffield.ac.uk).
 
 ## Consent
 

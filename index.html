@@ -338,11 +338,11 @@
     <h2>Data usage and privacy terms</h2>
     <ul class="about-list">
       <li>Responses and mark-making submissions will be incorporated into the Digital Good Network artwork series.</li>
-      <li>Data will be retained for the duration of the Digital Good Network project (5&nbsp;years), plus one year for any follow-up activities.</li>
+      <li>Data will be retained for one year after the Digital Good Network ends, to enable potential follow-up activities.</li>
       <li>All data will be stored in a secure Google Business account owned by Stefanie Posavec.</li>
       <li>Contributions will be credited in exhibition documentation, with text attributed to corresponding research projects where applicable.</li>
     </ul>
-    <p><strong>Further questions / concerns?</strong><br>Please email me directly at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a>.</p>
+    <p><strong>Further questions / concerns?</strong><br>Please email me directly at <a href="mailto:stef@stefanieposavec.com">stef@stefanieposavec.com</a> or you can contact Ruth (Digital Good Network Manager) on <a href="mailto:ruth.lauener@sheffield.ac.uk">ruth.lauener@sheffield.ac.uk</a>.</p>
   </section>
 
   <form id="survey" novalidate>
@@ -431,9 +431,8 @@
     </div>
 
     <div class="question mark-question" id="m1b">
-      <p>Now, try drawing another long line that looks different than the line you drew above.</p>
+      <p>Now, try drawing another long line that looks different than the line you drew above. <span class="optional">Optional</span></p>
       <div class="board" data-board="line-2"></div>
-      <p class="error-msg" hidden>Draw your second long line before submitting.</p>
     </div>
 
     <div class="question mark-question" id="m2">
@@ -451,9 +450,8 @@
     </div>
 
     <div class="question mark-question" id="m2b">
-      <p>Now, draw another short line below.</p>
+      <p>Now, draw another short line below. <span class="optional">Optional</span></p>
       <div class="board" data-board="short-2"></div>
-      <p class="error-msg" hidden>Draw your second short line before submitting.</p>
     </div>
 
     <div class="question mark-question" id="m3">
@@ -473,9 +471,8 @@
     </div>
 
     <div class="question mark-question" id="m3b">
-      <p><strong>Your final drawing:</strong> can you draw one more dot in a different style?</p>
+      <p><strong>Your final drawing:</strong> can you draw one more dot in a different style? <span class="optional">Optional</span></p>
       <div class="board" data-board="dot-2"></div>
-      <p class="error-msg" hidden>Draw your final dot before submitting.</p>
     </div>
 
     <template id="boardTemplate">
@@ -585,11 +582,11 @@
     { id: 'q5a', type: 'long-text', group: 'What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?', text: 'Who is this advice for?', maxWords: 15, required: true },
     { id: 'q5b', type: 'long-text', group: 'What advice would you offer to policymakers, developers, charities, or members of the public who want to work towards the digital good?', text: 'What is this advice?', maxWords: 100, required: true },
     { id: 'm1', type: 'drawing', board: 'line', text: 'Long line', required: true },
-    { id: 'm1b', type: 'drawing', board: 'line-2', text: 'Second long line', required: true },
+    { id: 'm1b', type: 'drawing', board: 'line-2', text: 'Second long line', required: false },
     { id: 'm2', type: 'drawing', board: 'short', text: 'Short line', required: true },
-    { id: 'm2b', type: 'drawing', board: 'short-2', text: 'Second short line', required: true },
+    { id: 'm2b', type: 'drawing', board: 'short-2', text: 'Second short line', required: false },
     { id: 'm3', type: 'drawing', board: 'dot', text: 'Dot', required: true },
-    { id: 'm3b', type: 'drawing', board: 'dot-2', text: 'Final dot', required: true }
+    { id: 'm3b', type: 'drawing', board: 'dot-2', text: 'Final dot', required: false }
   ];
   const TEXT_IDS = ['q1', 'q2', 'q3', 'q4', 'q5a', 'q5b'];
   const CONSENT_IDS = ['consent'];
@@ -1062,8 +1059,8 @@
       if (!t.value.trim()) { wordMsg(t, 'Please answer this question.'); missing.push(t.name); }
       else if (overLimit(t)) missing.push(t.name);
     });
-    boards.forEach(b => { if (!b.strokes.length) missing.push(b.spec.questionId); });
-    ['consent', 'q1', 'q2', 'q3'].concat(WORD_LIMITED.map(t => t.name), boards.map(b => b.spec.questionId))
+    boards.forEach(b => { if (!b.spec.repeat && !b.strokes.length) missing.push(b.spec.questionId); }); // second boards are optional
+    ['consent', 'q1', 'q2', 'q3'].concat(WORD_LIMITED.map(t => t.name), boards.filter(b => !b.spec.repeat).map(b => b.spec.questionId))
       .forEach(id => missing.includes(id) ? showError(id) : clearError(id));
     return missing;
   }

@@ -12,7 +12,7 @@
  */
 
 const JSON_FOLDER_NAME = 'json';
-const EXPECTED_FORMAT = 'mark-survey/3'; // six drawings: two each of line, short, dot
+const EXPECTED_FORMAT = 'mark-survey/3'; // six boards: line, short, dot required; a second of each optional
 const MAX_BYTES = 5 * 1024 * 1024; // reject anything over 5MB
 
 const HEADERS = [
@@ -66,7 +66,7 @@ function checkResponse(d) {
   if (typeof d.responseId !== 'string' || !/^[A-Za-z0-9-]{8,64}$/.test(d.responseId)) return 'Bad response ID';
   if (!d.session || !d.answers || !Array.isArray(d.drawings)) return 'Missing sections';
   if (d.answers.consent !== 'yes') return 'Consent not given';
-  for (const name of DRAWING_NAMES) {
+  for (const name of REQUIRED_DRAWINGS) {
     const dr = drawingFor(d, name);
     if (!dr || !Array.isArray(dr.strokes) || !dr.strokes.length) return 'Missing ' + name + ' drawing';
   }
@@ -74,9 +74,15 @@ function checkResponse(d) {
 }
 
 const DRAWING_NAMES = ['line', 'line-2', 'short', 'short-2', 'dot', 'dot-2'];
+const REQUIRED_DRAWINGS = ['line', 'short', 'dot']; // the second of each is optional
 
 function drawingFor(d, name) {
   return d.drawings.filter(dr => dr && dr.template === name)[0];
+}
+
+// 0 for an optional board left blank
+function strokeCount(dr) {
+  return dr && Array.isArray(dr.strokes) ? dr.strokes.length : 0;
 }
 
 // ---- Storage ----
@@ -113,7 +119,7 @@ function store(d, body) {
     safe(d.session.submittedAt),
     secondsOnPage,
     safe(a.consent), safe(a.q1), safe(a.q2), safe(a.q3), safe(a.q4), safe(a.q5a), safe(a.q5b),
-  ].concat(DRAWING_NAMES.map(name => drawingFor(d, name).strokes.length), [
+  ].concat(DRAWING_NAMES.map(name => strokeCount(drawingFor(d, name))), [
     pastEdge, points, safe(types),
     file.getUrl()
   ]));
